@@ -70,26 +70,84 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
 
-    /* File input styling */
-    .file-label {
-      display: block;
-      text-align: left;
-      font-size: 13px;
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 6px;
+    /* Hide native file input — replaced by custom drop zone */
+    #id_image { display: none; }
+
+    /* ── Custom file drop zone ── */
+    .drop-zone {
+      position: relative;
+      width: 100%;
+      padding: 28px 16px;
+      border: 2.5px dashed rgba(255, 255, 255, 0.7);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: #0053d6;
+      background: rgba(0, 83, 214, 0.1);
     }
 
-    /* Image preview (shown after file selected) */
+    .drop-zone__icon {
+      font-size: 2.6rem;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .drop-zone__primary {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+    }
+    .drop-zone__secondary {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 4px;
+    }
+
+    /* ── Filename chip — shown after file chosen ── */
+    .file-chip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.55);
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0d2a6b;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      word-break: break-all;
+      justify-content: center;
+    }
+    .file-chip.visible { display: flex; }
+    .file-chip .chip-icon { font-size: 15px; color: #43a047; flex-shrink: 0; }
+    .file-chip .chip-remove {
+      margin-left: auto;
+      flex-shrink: 0;
+      cursor: pointer;
+      font-size: 16px;
+      color: #c62828;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    /* ── Image preview (shown after file chosen) ── */
     #imgPreview {
       display: none;
       width: 100%;
-      max-height: 200px;
+      max-height: 190px;
       object-fit: contain;
       margin-top: 14px;
       border-radius: 10px;
       border: 3px solid rgba(255,255,255,0.8);
-      background: rgba(0,0,0,0.05);
+      background: rgba(0,0,0,0.06);
     }
 
     /* Next Button */
@@ -170,9 +228,22 @@
     <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <label class="file-label">Select MRI Image (.jpg / .png)</label>
+      <!-- Hidden native input rendered by Django form -->
       {{ form.image }}
-      <p class="file-hint">Supported formats: JPEG, PNG</p>
+
+      <!-- Styled drop zone — clicking it triggers the hidden input -->
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone__icon">&#128228;</div>
+        <div class="drop-zone__primary">Click to browse or drag &amp; drop</div>
+        <div class="drop-zone__secondary">Supported formats: JPEG &amp; PNG</div>
+      </div>
+
+      <!-- Filename chip -->
+      <div class="file-chip" id="fileChip">
+        <span class="chip-icon">&#10003;</span>
+        <span id="chipName">filename.jpg</span>
+        <span class="chip-remove" id="chipRemove" title="Remove file">&times;</span>
+      </div>
 
       <!-- Live image preview before submit -->
       <img id="imgPreview" alt="Selected image preview">
@@ -187,27 +258,65 @@
   </div>
 
   <script>
-    // Show preview and enable Next button when a file is chosen
-    const fileInput = document.querySelector('input[type="file"]');
-    const preview   = document.getElementById('imgPreview');
-    const nextBtn   = document.getElementById('nextBtn');
+    const fileInput  = document.getElementById('id_image');
+    const dropZone   = document.getElementById('dropZone');
+    const fileChip   = document.getElementById('fileChip');
+    const chipName   = document.getElementById('chipName');
+    const chipRemove = document.getElementById('chipRemove');
+    const preview    = document.getElementById('imgPreview');
+    const nextBtn    = document.getElementById('nextBtn');
 
-    fileInput.addEventListener('change', function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-        nextBtn.disabled = false;
-        nextBtn.innerHTML = 'Next <span class="arrow">&#8594;</span>';
-      } else {
-        preview.style.display = 'none';
-        nextBtn.disabled = true;
+    // Open file picker when drop zone is clicked
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Drag-and-drop visual feedback
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        // Assign dropped file to the hidden input via DataTransfer
+        const dt = new DataTransfer();
+        dt.items.add(e.dataTransfer.files[0]);
+        fileInput.files = dt.files;
+        handleFile(e.dataTransfer.files[0]);
       }
     });
+
+    // File chosen via picker
+    fileInput.addEventListener('change', function () {
+      if (this.files[0]) handleFile(this.files[0]);
+      else clearFile();
+    });
+
+    // Remove file selection
+    chipRemove.addEventListener('click', e => { e.stopPropagation(); clearFile(); });
+
+    function handleFile(file) {
+      // Show filename chip
+      chipName.textContent = file.name;
+      fileChip.classList.add('visible');
+
+      // Show image preview
+      const reader = new FileReader();
+      reader.onload = ev => {
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      // Enable Next button
+      nextBtn.disabled = false;
+    }
+
+    function clearFile() {
+      fileInput.value = '';
+      fileChip.classList.remove('visible');
+      preview.style.display = 'none';
+      preview.src = '';
+      nextBtn.disabled = true;
+    }
   </script>
 </body>
 </html>
