@@ -1,0 +1,96 @@
+
+<html>
+
+{% block content %}
+<style>
+    body {
+        background: #e9f3f9;
+        font-family: Arial, sans-serif;
+    }
+
+    .db-container {
+        width: 90%;
+        margin: auto;
+        margin-top: 40px;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #b1552b;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table thead {
+        background-color: skyblue;
+        color: black;
+    }
+
+    table th, table td {
+        padding: 12px;
+        border: 1px solid #c7d7e0;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    table tr:nth-child(even) {
+        background: #f4f9fc;
+    }
+
+    table tr:hover {
+        background: #e2eef6;
+    }
+
+    .no-records {
+        text-align: center;
+        padding: 20px;
+        font-size: 18px;
+        color: #666;
+    }
+</style>
+<body>
+
+<div class="db-container">
+    <h2>ML Prediction Database</h2>
+
+    <table>
+        <thead>
+            <tr>
+            
+                <th>Symptoms</th>
+                <th>Alzheimer Disease</th>
+                <th>Overlapping Symptom</th>
+                <th>Prediction Label</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in records %}
+            <tr>
+        
+                <td>{{ r.symptoms }}</td>
+                <td>{{ r.Alzheimer_Disease }}</td>
+                <td>{{ r.Overlapping_Symptom }}</td>
+                <td><strong>{{ r.label }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="no-records">No records found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+{% endblock %}

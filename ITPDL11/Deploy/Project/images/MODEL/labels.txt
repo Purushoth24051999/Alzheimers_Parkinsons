@@ -1,0 +1,6 @@
+0 MildDemented
+1 ModerateDemented
+2 Non_Parkinson
+3 NonDemented
+4 Parkinson
+5 VeryMildDemented

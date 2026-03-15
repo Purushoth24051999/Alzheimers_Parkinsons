@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkinson's Prediction Form</title>
+
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* Background Image ONLY */
+            background-image: url('https://backpainsa.com/wp-content/uploads/2015/02/bigstock-Medical-physician-doctor-hands-84721406.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Form container (no bg overlay) */
+        .form-card {
+            background: rgba(255, 255, 255, 0.85); /* light glass effect */
+            padding: 30px;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 450px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #0d47a1;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background: #0d47a1;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #0a357b;
+        }
+
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #c62828;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .home-btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 22px;
+      border-radius: 10px;
+      background: rgba(214, 54, 54, 0.829);
+      color: black;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .home-btn:hover {
+      background: rgba(255,255,255,0.5);
+    }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-card">
+        
+
+        <h1>Parkinson Prediction Form</h1>
+
+        <form action="{% url 'model' %}" method="post">
+            {% csrf_token %}
+
+            <label for="symptoms">Symptoms:</label>
+            <select id="symptoms" name="symptoms" required>
+                <option value="" disabled selected>Select a symptom</option>
+                <option value="17">Memory loss</option>
+                <option value="3">Confusion</option>
+                <option value="26">Visual-spatial difficulties</option>
+                <option value="8">Difficulty recognizing people</option>
+                <option value="21">Severe memory loss</option>
+                <option value="14">Incontinence</option>
+                <option value="11">Difficulty walking</option>
+                <option value="16">Loss of smell</option>
+                <option value="0">Agitation</option>
+                <option value="13">Hallucinations</option>
+                <option value="15">Loss of facial expression</option>
+                <option value="10">Difficulty swallowing</option>
+                <option value="6">Difficulty in speaking</option>
+                <option value="4">Dementia</option>
+                <option value="18">Memory problems</option>
+                <option value="2">Cognitive decline</option>
+                <option value="22">Sleep disturbances</option>
+                <option value="19">Mood changes</option>
+                <option value="5">Depression</option>
+                <option value="1">Balance problems</option>
+                <option value="23">Slowness of movement</option>
+                <option value="24">Stiffness</option>
+                <option value="25">Tremors</option>
+                <option value="12">Disorientation</option>
+                <option value="7">Difficulty in thinking</option>
+                <option value="20">REM sleep disorder</option>
+            </select>
+
+            <label for="alzheimers-disease">Alzheimer's Disease:</label>
+            <select id="alzheimers-disease" name="Alzheimer_Disease" required>
+                <option disabled selected>__select__</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <label for="Overlapping_Symptom">Overlapping Symptom:</label>
+            <select id="Overlapping_Symptom" name="Overlapping_Symptom" required>
+                <option disabled selected>__select__</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+
+            <input type="submit" value="Predict">
+            <center><a href="/" class="home-btn">Home</a></center>
+        </form>
+    </div>
+
+</body>
+</html>

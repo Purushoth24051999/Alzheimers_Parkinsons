@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results</title>
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            background-color: skyblue;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .classification {
+            background-color: white;
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 850px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #333;
+        }
+
+        p {
+            font-size: 1.15em;
+            color: #555;
+        }
+
+        /* Beautiful Button Style */
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            margin: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #0d6efd;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #084298;
+        }
+
+        .btn-secondary {
+            background-color: #198754;
+        }
+
+        .btn-secondary:hover {
+            background-color: #0f613c;
+        }
+
+        /* Main info box */
+        .normal-condition {
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .normal-condition h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .normal-condition p strong {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="classification">
+       <h1>Parkinson Disease Prediction</h1>
+        {% if predict == 0 %}
+        <div class="normal-condition">
+            <h1>Normal Condition</h1>
+            <p><strong>Description:</strong> This classification indicates a normal condition where no signs of Parkinson’s disease or related disorders are detected.</p>
+            <p><strong>Symptoms:</strong> No abnormal symptoms. The patient exhibits normal motor control, reflexes, and cognitive functions.</p>
+            <p><strong>Behavior:</strong> Normal daily activities and functions are performed without neurological issues.</p>
+            <p><strong>Causes:</strong> Healthy neurological state with no detectable diseases.</p>
+            <p><strong>Prevention:</strong> Maintain exercise, healthy diet, and regular check-ups.</p>
+            <p><strong>Precautions:</strong> Monitor any subtle changes in movement or cognition.</p>
+        </div>
+
+        {% elif predict == 1 %}
+        <div class="normal-condition">
+            <h1>Parkinson's Disease</h1>
+            <p><strong>Description:</strong> Parkinson's disease is a progressive nervous system disorder affecting movement.</p>
+            <p><strong>Symptoms:</strong> Tremors, slow movement, stiffness, balance difficulty, depression, sleep issues, cognitive decline.</p>
+            <p><strong>Behavior:</strong> Difficulty walking, talking, and completing daily tasks.</p>
+            <p><strong>Causes:</strong> Breakdown of dopamine-producing neurons. Genetics and environment contribute.</p>
+            <p><strong>Prevention:</strong> No cure, but exercise and a healthy diet help slow progression.</p>
+            <p><strong>Precautions:</strong> Early detection, therapy, medications, and support groups help manage symptoms.</p>
+
+            <h1>Additional Information</h1>
+            <p><strong>Tremors:</strong> Usually begin in the hands or fingers.</p>
+            <p><strong>Bradykinesia:</strong> Slowed movement affecting daily tasks.</p>
+            <p><strong>Muscle Rigidity:</strong> Limits movement.</p>
+            <p><strong>Postural Instability:</strong> Balance issues.</p>
+            <p><strong>Sleep Disorders:</strong> Difficulty sleeping, REM disorder.</p>
+            <p><strong>Mood Changes:</strong> Depression, anxiety, hallucinations.</p>
+        </div>
+        {% endif %}
+
+        <!-- Buttons Section -->
+        <div class="btn-container">
+            <a href="/" class="btn">🏠 Home</a>
+            <a href="{% url 'model' %}" class="btn">🔄 Try Another Prediction</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: #6fbbe7;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* WRAPPER — SMALL SIZE */
+    .container {
+      width: 750px;          /* Reduced size */
+      height: 420px;         /* Reduced height */
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      background: #fff;
+    }
+
+    /* LEFT FORM — SMALL */
+    .left-section {
+      width: 50%;
+      padding: 35px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h2 {
+      text-align: center;
+      color: #219ce4;
+      font-size: 26px;     /* Smaller title */
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #219ce4;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1.5px solid #ffcec2;
+      background: #fff7f5;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .btn-login {
+      padding: 12px;
+      border-radius: 25px;
+      background: #219ce4;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .btn-login:hover {
+      background: #93c7e6;
+    }
+
+    .copy-text {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #219ce4;
+    }
+
+    /* RIGHT IMAGE — SMALL */
+    .right-section {
+      width: 50%;
+      background: url("https://today.ucsd.edu/news_uploads/_social/milad-fakurian-unsplash-1200x628.jpg")
+        no-repeat center;
+      background-size: cover;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+      }
+      .right-section {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="left-section">
+      <form method="post">
+        {% csrf_token %}
+
+        <h2>Login</h2>
+
+        <label>Username</label>
+        {{ form.username }}
+
+        <label>Password</label>
+        {{ form.password }}
+
+        <button type="submit" class="btn-login">Login</button>
+
+        <div class="copy-text">
+          Don't have an account?
+          <a href="{% url 'users-register' %}">Register</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="right-section"></div>
+
+  </div>
+
+</body>
+</html>

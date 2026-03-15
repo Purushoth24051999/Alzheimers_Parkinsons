@@ -1,0 +1,27 @@
+Symptom,Alzheimer_Disease,Parkinsons_Disease,Overlapping_Symptom
+Memory loss,Yes,No,No
+Confusion,Yes,No,No
+Difficulty in thinking,Yes,No,No
+Disorientation,Yes,No,No
+Tremors,No,Yes,No
+Stiffness,No,Yes,No
+Slowness of movement,No,Yes,No
+Balance problems,No,Yes,No
+Depression,Yes,Yes,Yes
+Mood changes,Yes,Yes,Yes
+Sleep disturbances,Yes,Yes,Yes
+Cognitive decline,Yes,Yes,Yes
+Memory problems,Yes,Yes,Yes
+Dementia,Yes,Yes,Yes
+Difficulty in speaking,No,Yes,No
+Difficulty swallowing,No,Yes,No
+Loss of facial expression,No,Yes,No
+Hallucinations,Yes,Yes,Yes
+Agitation,Yes,Yes,Yes
+Loss of smell,No,Yes,No
+Difficulty walking,No,Yes,No
+Incontinence,Yes,Yes,No
+Severe memory loss,Yes,No,No
+Difficulty recognizing people,Yes,No,No
+Visual-spatial difficulties,Yes,No,No
+Rapid eye movement (REM) sleep disorder,No,Yes,No

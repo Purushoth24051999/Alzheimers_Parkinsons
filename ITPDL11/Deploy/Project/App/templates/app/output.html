@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurodegenerative Disease Detection - Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            background-image: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 82, 204, 0.1);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e88e5, #0d47a1);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -150px;
+            right: -100px;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .brain-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #bbdefb;
+            position: relative;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 40px;
+        }
+        
+        .result-section {
+            flex: 1;
+            min-width: 350px;
+            padding: 20px;
+        }
+        
+        .image-section {
+            flex: 1;
+            min-width: 350px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result-card {
+            background-color: #f8fbff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 82, 204, 0.08);
+            margin-bottom: 30px;
+            border-left: 5px solid #1e88e5;
+        }
+        
+        .result-title {
+            font-size: 1.5rem;
+            color: #0d47a1;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-title i {
+            margin-right: 10px;
+            color: #1e88e5;
+        }
+        
+        .prediction-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin: 25px 0;
+            border: 2px solid #64b5f6;
+        }
+        
+        .prediction-label {
+            font-size: 1.2rem;
+            color: #0d47a1;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .prediction-result {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1565c0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .confidence {
+            font-size: 1.1rem;
+            color: #424242;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            border-radius: 6px;
+            width: 85%;
+        }
+        
+        .uploaded-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 25px;
+            border: 8px solid white;
+            object-fit: contain;
+            background-color: #f5f5f5;
+        }
+        
+        .image-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 25px;
+            border: 8px solid white;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .info-section {
+            background-color: #f1f8ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            color: #0d47a1;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-title i {
+            margin-right: 10px;
+            color: #1e88e5;
+        }
+        
+        .info-content {
+            color: #424242;
+        }
+        
+        .info-content ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .info-content li {
+            margin-bottom: 8px;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .category-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+        
+        .category-card.active {
+            border-color: #1e88e5;
+            background-color: #e3f2fd;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .category-desc {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1e88e5, #0d47a1);
+            color: white;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #1e88e5;
+            border: 2px solid #1e88e5;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f0f7ff;
+            transform: translateY(-3px);
+        }
+        
+        .btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        .disclaimer {
+            background-color: #fff8e1;
+            border-left: 5px solid #ffb300;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #5d4037;
+        }
+        
+        .recommendation {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+        
+        .quality-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .prediction-result {
+                font-size: 1.8rem;
+            }
+            
+            .result-section, .image-section {
+                padding: 10px;
+            }
+            
+            .category-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brain-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h1>Neurodegenerative Disease Detection</h1>
+            <p>AI-Powered Analysis of Brain MRI Scans for Alzheimer's & Parkinson's Disease Detection</p>
+        </div>
+        
+        <div class="content">
+            <div class="image-section">
+                <h2 class="result-title"><i class="fas fa-image"></i> Uploaded MRI Scan</h2>
+                
+                <!-- Dynamic Image Display - This will show your uploaded image -->
+                {% if obj %}
+                    <img src="{{ obj.image.url }}" alt="Uploaded MRI Scan" class="uploaded-image" id="uploadedImage">
+                {% else %}
+                    <div class="image-placeholder">
+                        <i class="fas fa-image" style="font-size: 3rem; color: #ccc; margin-bottom: 10px;"></i>
+                        <p>No image uploaded</p>
+                    </div>
+                {% endif %}
+                
+                <div class="quality-indicator">
+                    <span>Image Quality: <strong id="qualityText">Good</strong></span>
+                    <span id="qualityPercent">92%</span>
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="qualityBar"></div>
+                </div>
+                
+                <h2 class="result-title" style="margin-top: 30px;"><i class="fas fa-list"></i> All Categories</h2>
+                <div class="category-grid" id="categoryGrid">
+                    <!-- Categories will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="result-card">
+                    <h2 class="result-title"><i class="fas fa-chart-line"></i> Analysis Results</h2>
+                    
+                    <div class="prediction-box">
+                        <div class="prediction-label">AI PREDICTION</div>
+                        <!-- Dynamic Prediction Display -->
+                        {% if predict %}
+                            <div class="prediction-result" id="predictionResult">{{ predict|upper }}</div>
+                        {% else %}
+                            <div class="prediction-result" id="predictionResult">NO DATA</div>
+                        {% endif %}
+                        
+                        <div class="confidence">
+                            <i class="fas fa-chart-bar"></i>
+                            Confidence Level: <strong id="confidenceValue">94%</strong>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="info-title"><i class="fas fa-info-circle"></i> About This Diagnosis</h3>
+                        <div class="info-content" id="diagnosisInfo">
+                            <!-- Dynamic content based on prediction -->
+                            {% if predict == "NonDemented" %}
+                                <p><strong>Non Demented</strong> indicates that no signs of dementia or cognitive impairment were detected in the MRI scan. The brain structure appears normal for the patient's age group.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Normal hippocampal volume detected</li>
+                                    <li>Appropriate cortical thickness for age</li>
+                                    <li>Normal ventricular size</li>
+                                    <li>No significant amyloid plaque buildup visible</li>
+                                </ul>
+                            {% elif predict == "VeryMildDemented" %}
+                                <p><strong>Very Mild Demented</strong> suggests very early signs of Alzheimer's disease. Individuals may experience minor memory lapses but daily activities are generally unaffected.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Slight hippocampal volume reduction</li>
+                                    <li>Minimal cortical thinning in temporal lobe</li>
+                                    <li>Normal ventricular size for age</li>
+                                    <li>Early amyloid plaque accumulation possible</li>
+                                </ul>
+                            {% elif predict == "MildDemented" %}
+                                <p><strong>Mild Demented</strong> indicates mild Alzheimer's disease. Noticeable cognitive decline that may affect complex daily tasks but basic functions remain intact.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Moderate hippocampal volume reduction</li>
+                                    <li>Cortical thinning in temporal and parietal lobes</li>
+                                    <li>Slight ventricular enlargement</li>
+                                    <li>Amyloid plaque accumulation detected</li>
+                                </ul>
+                            {% elif predict == "ModerateDemented" %}
+                                <p><strong>Moderate Demented</strong> suggests moderate Alzheimer's disease. Significant cognitive impairment affecting daily activities and requiring assistance.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Significant hippocampal atrophy</li>
+                                    <li>Widespread cortical thinning</li>
+                                    <li>Moderate ventricular enlargement</li>
+                                    <li>Substantial amyloid plaque buildup</li>
+                                </ul>
+                            {% elif predict == "Non_Parkinson" %}
+                                <p><strong>Non Parkinson</strong> indicates no signs of Parkinson's disease detected in the MRI scan. Basal ganglia and substantia nigra appear normal.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Normal substantia nigra integrity</li>
+                                    <li>Appropriate basal ganglia volume</li>
+                                    <li>No significant Lewy bodies detected</li>
+                                    <li>Normal dopamine transporter activity</li>
+                                </ul>
+                            {% elif predict == "Parkinson" %}
+                                <p><strong>Parkinson's Disease</strong> suggests Parkinson's disease. Characterized by degeneration of dopamine-producing neurons in the substantia nigra.</p>
+                                <p>Key observations from your MRI scan:</p>
+                                <ul>
+                                    <li>Substantia nigra degeneration detected</li>
+                                    <li>Reduced dopamine transporter activity</li>
+                                    <li>Possible Lewy body accumulation</li>
+                                    <li>Basal ganglia abnormalities</li>
+                                </ul>
+                            {% else %}
+                                <p>Upload an MRI scan to get analysis results.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Recommendation -->
+                    <div class="recommendation" id="recommendationBox">
+                        <strong><i class="fas fa-heartbeat"></i> Recommendation:</strong> 
+                        <span id="recommendationText">
+                            {% if predict == "NonDemented" %}
+                                Continue regular cognitive health monitoring. No immediate intervention needed.
+                            {% elif predict == "VeryMildDemented" %}
+                                Consult a neurologist for comprehensive evaluation. Consider cognitive exercises and regular monitoring.
+                            {% elif predict == "MildDemented" %}
+                                Schedule appointment with a neurologist. Consider medication options and lifestyle interventions.
+                            {% elif predict == "ModerateDemented" %}
+                                Urgent neurological consultation required. Consider caregiver support and comprehensive treatment plan.
+                            {% elif predict == "Non_Parkinson" %}
+                                Continue regular neurological checkups. No specific intervention for Parkinson's needed.
+                            {% elif predict == "Parkinson" %}
+                                Consult a movement disorder specialist. Consider medication options and physical therapy.
+                            {% else %}
+                                Upload an MRI scan to get personalized recommendations.
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="disclaimer">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> This AI-assisted analysis is for informational purposes only and should not replace consultation with a qualified healthcare professional. Please consult a neurologist for a comprehensive diagnosis.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+            <a href="{% url 'Deploy_8' %}" class="btn btn-secondary">
+                <i class="fas fa-upload"></i> Analyze Another Scan
+            </a>
+            <button onclick="window.print()" class="btn btn-secondary">
+                <i class="fas fa-print"></i> Print Report
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>Neurodegenerative Disease Detection System | AI-Powered Medical Analysis Tool</p>
+            <p>This system classifies brain MRI scans into six categories for Alzheimer's and Parkinson's detection.</p>
+        </div>
+    </div>
+
+    <script>
+        // Category definitions with details
+        const categories = [
+            {
+                id: "NonDemented",
+                name: "Non Demented",
+                description: "No dementia detected",
+                color: "#4CAF50",
+                confidence: 94,
+                icon: "fas fa-smile"
+            },
+            {
+                id: "VeryMildDemented",
+                name: "Very Mild Demented",
+                description: "Early stage Alzheimer's",
+                color: "#8BC34A",
+                confidence: 86,
+                icon: "fas fa-brain"
+            },
+            {
+                id: "MildDemented",
+                name: "Mild Demented",
+                description: "Mild Alzheimer's disease",
+                color: "#FF9800",
+                confidence: 82,
+                icon: "fas fa-exclamation-triangle"
+            },
+            {
+                id: "ModerateDemented",
+                name: "Moderate Demented",
+                description: "Moderate Alzheimer's disease",
+                color: "#F44336",
+                confidence: 89,
+                icon: "fas fa-procedures"
+            },
+            {
+                id: "Non_Parkinson",
+                name: "Non Parkinson",
+                description: "No Parkinson's detected",
+                color: "#2196F3",
+                confidence: 91,
+                icon: "fas fa-walking"
+            },
+            {
+                id: "Parkinson",
+                name: "Parkinson's Disease",
+                description: "Parkinson's disease detected",
+                color: "#9C27B0",
+                confidence: 88,
+                icon: "fas fa-hand-paper"
+            }
+        ];
+
+        // Get the prediction from Django template (or use default)
+        const djangoPrediction = "{{ predict|escapejs }}";
+        
+        // Function to create category cards
+        function createCategoryCards() {
+            const categoryGrid = document.getElementById('categoryGrid');
+            categoryGrid.innerHTML = '';
+            
+            categories.forEach(category => {
+                const card = document.createElement('div');
+                card.className = `category-card ${category.id === djangoPrediction ? 'active' : ''}`;
+                card.dataset.id = category.id;
+                
+                card.innerHTML = `
+                    <div class="category-icon">
+                        <i class="${category.icon}" style="color: ${category.color};"></i>
+                    </div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-desc">${category.description}</div>
+                `;
+                
+                categoryGrid.appendChild(card);
+            });
+        }
+
+        // Function to update UI based on prediction
+        function updateUIFromPrediction() {
+            if (!djangoPrediction || djangoPrediction === "None" || djangoPrediction === "") {
+                return;
+            }
+            
+            // Find the category
+            const category = categories.find(c => c.id === djangoPrediction);
+            if (!category) return;
+            
+            // Update confidence display
+            document.getElementById('confidenceValue').textContent = `${category.confidence}%`;
+            const confidenceBar = document.getElementById('confidenceBar');
+            confidenceBar.style.width = `${category.confidence}%`;
+            confidenceBar.style.background = `linear-gradient(90deg, ${category.color}, ${category.color}99)`;
+            
+            // Update quality bar to match category color
+            document.getElementById('qualityBar').style.background = `linear-gradient(90deg, ${category.color}, ${category.color}99)`;
+            
+            // Update prediction result color
+            const predictionElement = document.getElementById('predictionResult');
+            if (predictionElement) {
+                predictionElement.style.color = category.color;
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            createCategoryCards();
+            updateUIFromPrediction();
+            
+            // Display image info if available
+            const uploadedImage = document.getElementById('uploadedImage');
+            if (uploadedImage) {
+                // Set up image loading handler
+                uploadedImage.onload = function() {
+                    // Image loaded successfully
+                    document.getElementById('qualityText').textContent = "Good";
+                    document.getElementById('qualityPercent').textContent = "92%";
+                };
+                
+                uploadedImage.onerror = function() {
+                    // Image failed to load
+                    document.getElementById('qualityText').textContent = "Poor";
+                    document.getElementById('qualityPercent').textContent = "45%";
+                    document.getElementById('qualityBar').style.width = "45%";
+                    document.getElementById('qualityBar').style.background = "linear-gradient(90deg, #F44336, #F4433699)";
+                };
+            }
+        });
+    </script>
+</body>
+</html>

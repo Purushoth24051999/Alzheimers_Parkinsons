@@ -1,0 +1,176 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Audio File</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            background-color: #e9f7f9;
+            padding: 50px;
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ4frpKHMBBIGkDFoE7k1bzn55m46bOmZw7w&s);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #2e86de;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #2e86de;
+            text-align: center;
+        }
+        form {
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #2e86de;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1b4f72;
+        }
+    </style>
+</head>
+<center>
+<body>
+    
+        <div class="container">
+            <h2>Upload Medical Audio File</h2>
+            <svg id='css3-spinner-svg-pulse' version='1.2' height='210' width='550' xmlns='http://www.w3.org/2000/svg' viewport='0 0 60 60' xmlns:xlink='http://www.w3.org/1999/xlink'><path id='css3-spinner-pulse' stroke='#DE6262' fill='none' stroke-width='2' stroke-linejoin='round' d='M0,90L250,90Q257,60 262,87T267,95 270,88 273,92t6,35 7,-60T290,127 297,107s2,-11 10,-10 1,1 8,-10T319,95c6,4 8,-6 10,-17s2,10 9,11h210' /></svg>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    
+</body>
+</center>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check</title>
+    <style>
+        body {
+            background-color: #012;
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXSRFDUqFdgbV2j-5iveR2tLIBsrm_3GA5eANm2cLIW54oXmISRzVbbHvID-Y2kIe8FM8&usqp=CAU) no-repeat;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: Poppins, sans-serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        #css3-spinner-svg-pulse-wrapper {
+            position: relative;
+            width: 260px;
+            height: 210px;
+            background-color: transparent;
+            animation: none;
+            margin-bottom: 20px;
+        }
+
+        #css3-spinner-svg-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #css3-spinner-pulse {
+            stroke-dasharray: 281;
+            -webkit-animation: dash 5s infinite linear forwards;
+            animation: dash 5s infinite linear forwards;
+        }
+
+        @-webkit-keyframes dash {
+            from {
+                stroke-dashoffset: 814;
+            }
+            to {
+                stroke-dashoffset: -814;
+            }
+        }
+
+        @keyframes dash {
+            from {
+                stroke-dashoffset: 814;
+            }
+            to {
+                stroke-dashoffset: -814;
+            }
+        }
+
+        #one {
+            color: whitesmoke;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+            margin-top: 20px;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            background-color: #2e86de;
+            border: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #1b4f72;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="one">How Healthy Are You?</h1>
+
+   
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary">Upload</button>
+        </form>
+    </div>
+</body>
+</html>

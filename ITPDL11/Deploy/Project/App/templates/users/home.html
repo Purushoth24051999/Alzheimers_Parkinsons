@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+    <head>
+        <meta charset="utf-8">
+        <title>Alzheimer Disease Prediction Website Template</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet"> 
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="/static/lib/animate/animate.min.css" rel="stylesheet">
+        <link href="/static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="/static/css/style.css" rel="stylesheet">
+    </head>
+    <style>
+    /* Floating Chatbot Button */
+.chatbot-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #d8511b;
+    color: white;
+    font-size: 28px;
+    padding: 14px 18px;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+    transition: 0.3s ease-in-out;
+}
+
+.chatbot-btn:hover {
+    background-color: #1f506a;
+    transform: scale(1.1);
+}
+</style
+
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Topbar Start -->
+     
+
+        <!-- Navbar & Hero Start -->
+        <div class="container-fluid position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <h1 class="text-primary m-0"><i class="fas fa-star-of-life me-3"></i>Alzheimer</h1>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                      {% if user.is_authenticated %}
+                        <a href="{% url 'users-home' %}" class="nav-item nav-link active">Home</a>
+                        <div class="nav-item dropdown">
+                          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Model</a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item" href="{% url 'model' %}">ML Prediction</a>
+                              <a class="dropdown-item" href="{% url 'Deploy_8' %}">DL Prediction</a>
+                          </div>
+                      </div>
+                        <a href="{% url 'users-profile' %}" class="nav-item nav-link">Profile</a>
+                        <div class="nav-item dropdown">
+                          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Database</a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item" href="{% url 'ml_Database' %}">ML Database</a>
+                              <a class="dropdown-item" href="{% url 'Database' %}">DL Database</a>
+                          </div>
+                      </div>
+                        </div>
+                        
+                    </div>
+                    <a class="btn btn-primary rounded-pill text-white py-2 px-4 flex-wrap flex-sm-shrink-0" href="{% url 'logout_view' %}">Logout</a>
+                    <!-- Chatbot Floating Button -->
+                  
+
+                    {% else %}
+                    <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'login' %}">Login</a>
+                    {% endif %}
+                </div>
+            </nav>
+
+
+            <!-- Carousel Start -->
+        
+            <div class="header-carousel owl-carousel">
+                <div class="header-carousel-item">
+                    <img src="https://static.toiimg.com/photo/120129965.cms" class="img-fluid w-100" alt="Image">
+                  
+                    <div class="carousel-caption">
+                        <div class="carousel-caption-content p-3">
+                          
+                          <h1 class="display-1 text-capitalize text-white mb-4">Alzheimer Disease Prediction</h1>
+                          <p class="mb-5 fs-5 animated slideInDown">
+                              We provide specialized care, therapeutic activities, and personalized support for individuals living with Alzheimer’s disease. 
+                             
+                          </p>
+                          {% if user.is_authenticated %}
+                          <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'model' %}">ML Prediction</a>
+                          <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'Deploy_8' %}">DL Prediction</a>
+                          {% else %}
+                            <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'users-register' %}">Register</a>
+                          {% endif %}
+                           
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="header-carousel-item">
+                    <img src="https://citynursinghome.com/wp-content/uploads/2021/08/neuro-main.jpg" class="img-fluid w-100" alt="Image">
+                    <div class="carousel-caption">
+                        <div class="carousel-caption-content p-3">
+                          <h1 class="display-1 text-capitalize text-white mb-4">Alzheimer Disease Prediction</h1>
+                          <p class="mb-5 fs-5 animated slideInDown">
+                              We provide specialized care, therapeutic activities, and personalized support for individuals living with Alzheimer’s disease. 
+                             
+                          </p>
+                          
+                          {% if user.is_authenticated %}
+                          <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'model' %}">ML Prediction</a>
+                          <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'Deploy_8' %}">DL Prediction</a>
+                          {% else %}
+                            <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="{% url 'users-register' %}">Register</a>
+                          {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Carousel End -->
+        </div>
+        <!-- Navbar & Hero End -->
+
+
+        <!-- Services Start -->
+        {% if user.is_authenticated %}
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+                  <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.2s">
+                       <div class="sub-style">
+                          <h4 class="sub-title px-3 mb-0">Our Services</h4>
+                       </div>
+            <h1 class="display-3 mb-4">AI-Powered Alzheimer’s Disease Prediction & Screening</h1>
+            <p class="mb-0">
+                Our platform uses advanced Machine Learning and Deep Learning models to assist in the 
+                early detection of Alzheimer’s Disease. With accurate symptom analysis, cognitive assessment, 
+                and risk evaluation tools, we help clinicians and users make informed health decisions.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- Service 1 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="data:image/jpeg;base64,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" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Symptom-Based Prediction</h5>
+                        <p>AI model that evaluates key cognitive and behavioral symptoms to estimate Alzheimer’s risk.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://static.vecteezy.com/system/resources/previews/033/238/453/non_2x/doctor-checking-a-brain-flat-style-illustration-doctor-searching-something-in-a-brain-concept-brain-doctor-neurologist-or-neurosurgeon-with-a-brain-stock-image-vector.jpg" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Early Stage Detection</h5>
+                        <p>Identifies early cognitive decline patterns, helping with timely medical intervention.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD-RC8MaXDnyxpUVJm58MgeKNq2AiSDovORA&s" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Cognitive Assessment</h5>
+                        <p>Automated evaluation of memory, reasoning, and mental processing abilities.Automated evaluation of memory, reasoning, and mental processing abilities.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://www.kenhub.com/thumbor/zoz_XVCq44UFroH2ds6eoOUvdtA=/fit-in/800x1600/filters:watermark(/images/logo_url.png,-10,-10,0):background_color(FFFFFF):format(jpeg)/images/library/13517/ff.jpg" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">MRI Image Analysis (DL)</h5>
+                        <p>Deep Learning models analyze brain MRI scans to detect structural Alzheimer’s markers.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 5 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://etimg.etb2bimg.com/photo/94300147.cms" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Risk Factor Evaluation</h5>
+                        <p>Evaluates lifestyle, genetic, and environmental factors contributing to Alzheimer’s risk.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 6 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="data:image/jpeg;base64,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" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Progression Monitoring</h5>
+                        <p>Tracks cognitive changes over time to help clinicians monitor disease progression.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 7 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://plus.unsplash.com/premium_photo-1726769176212-1ab1fd60f42a?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bWVkaWNhbCUyMHJlY29yZHN8ZW58MHx8MHx8fDA%3D" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Report Generation</h5>
+                        <p>Generates detailed, easy-to-understand reports on prediction outcomes and symptom analysis.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 8 -->
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="service-item rounded">
+                    <div class="service-img rounded-top">
+                        <img src="https://themindstudios.com/blog/content/images/2023/08/IMG-4--35-.jpg" class="img-fluid rounded-top w-100" alt="">
+                    </div>
+                    <div class="service-content rounded-bottom bg-light p-4">
+                        <h5 class="mb-4">Patient Data Management</h5>
+                        <p>Secure storage and visualization of prediction history for healthcare professionals.</p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-2">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.2s">
+                <a class="btn btn-primary rounded-pill text-white py-3 px-5" href="#">
+                    Explore More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- About Start -->
+        <div class="container-fluid about bg-light py-5">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-5 wow fadeInLeft" data-wow-delay="0.2s">
+                        <div class="about-img pb-5 ps-5">
+                            <img src="https://fptsoftware.com/-/media/project/fpt-software/fso/blog/hp-content/3/the-four-big-challenges-to-data-management-in-healthcare.jpg?modified=20231014085646" class="img-fluid rounded w-100" style="object-fit: cover;" alt="Image">
+                            <div class="about-img-inner">
+                                <img src="https://www.handsonsystem.com/uploads/blogs/thumbnails/Clinical%20Data%20Management.png" class="img-fluid rounded-circle w-100 h-100" alt="Image">
+                            </div>
+                            <div class="about-experience">15 years experience</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 wow fadeInRight" data-wow-delay="0.4s">
+                        <div class="section-title text-start mb-5">
+                            <h4 class="sub-title pe-3 mb-0">About Us</h4>
+                            <h1 class="display-3 mb-4">We are Ready to Help Improve Your Treatment.</h1>
+                            <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat deleniti amet at atque sequi quibusdam cumque itaque repudiandae temporibus, eius nam mollitia voluptas maxime veniam necessitatibus saepe in ab? Repellat!</p>
+                            <div class="mb-4">
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> Refresing to get such a personal touch.</p>
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> Duis aute irure dolor in reprehenderit in voluptate.</p>
+                                <p class="text-secondary"><i class="fa fa-check text-primary me-2"></i> Velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                            </div>
+                            <a href="#" class="btn btn-primary rounded-pill text-white py-3 px-5">Discover More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+        <!-- Feature Start -->
+        <div class="container-fluid feature py-5">
+    <div class="container py-5">
+        <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="sub-style">
+                <h4 class="sub-title px-3 mb-0">Why Choose Us</h4>
+            </div>
+            <h1 class="display-3 mb-4">Why Choose Us? Advanced Alzheimer’s Prediction</h1>
+            <p class="mb-0">
+                Our platform provides accurate AI-based Alzheimer’s disease prediction, early detection support, 
+                and detailed analysis to help patients and caregivers make informed medical decisions.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-diagnoses fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Accurate Diagnosis</h5>
+                            <p class="mb-0">AI-powered models help detect Alzheimer’s risk with high accuracy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-briefcase-medical fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Personalized Insights</h5>
+                            <p class="mb-0">Each prediction includes symptom-based analysis tailored to the patient.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-hospital-user fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Improved Patient Care</h5>
+                            <p class="mb-0">Helping caregivers and doctors understand risks for better decisions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-users fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Trusted by Professionals</h5>
+                            <p class="mb-0">Built with guidance from neurologists and healthcare specialists.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-spa fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Easy & Comfortable</h5>
+                            <p class="mb-0">Simple input process designed for both patients and family members.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-heart fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Compassionate Support</h5>
+                            <p class="mb-0">We care deeply about the comfort and mental well-being of patients.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fab fa-pied-piper fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Reliable Performance</h5>
+                            <p class="mb-0">Our models provide consistent, validated prediction results.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="row-cols-1 feature-item p-4">
+                    <div class="col-12">
+                        <div class="feature-icon mb-4">
+                            <div class="p-3 d-inline-flex bg-white rounded">
+                                <i class="fas fa-user-md fa-4x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="feature-content d-flex flex-column">
+                            <h5 class="mb-4">Expert Guidance</h5>
+                            <p class="mb-0">Recommendations crafted based on medical research and best practices.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.2s">
+               
+
+        </div>
+    </div>
+</div>
+
+        <!-- Feature End -->
+
+
+       
+        <!-- Team Start -->
+        <div class="container-fluid team py-5">
+    <div class="container py-5">
+        <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="sub-style">
+                <h4 class="sub-title px-3 mb-0">Meet Our Team</h4>
+            </div>
+            <h1 class="display-3 mb-4">Our Expert Team in Alzheimer’s Prediction & Research</h1>
+            <p class="mb-0">
+                Our multidisciplinary team brings expertise in neurology, machine learning, clinical research, 
+                and data science to deliver accurate Alzheimer’s disease prediction and early detection solutions.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- Member 1 -->
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="team-item rounded">
+                    <div class="team-img rounded-top h-100">
+                        <img src="/static/img/team-1.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <div class="team-icon d-flex justify-content-center">
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content text-center border border-primary border-top-0 rounded-bottom p-4">
+                        <h5>Dr.Mehta</h5>
+                        <p class="mb-0">Neurologist & Alzheimer’s Specialist</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 2 -->
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="team-item rounded">
+                    <div class="team-img rounded-top h-100">
+                        <img src="/static/img/team-2.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <div class="team-icon d-flex justify-content-center">
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content text-center border border-primary border-top-0 rounded-bottom p-4">
+                        <h5>Dr.Arjun Rao</h5>
+                        <p class="mb-0">AI & Machine Learning Researcher</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 3 -->
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="team-item rounded">
+                    <div class="team-img rounded-top h-100">
+                        <img src="/static/img/team-3.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <div class="team-icon d-flex justify-content-center">
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content text-center border border-primary border-top-0 rounded-bottom p-4">
+                        <h5>Dr.Kavya Sharma</h5>
+                        <p class="mb-0">Clinical Research Scientist</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member 4 -->
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="team-item rounded">
+                    <div class="team-img rounded-top h-100">
+                        <img src="/static/img/team-4.jpg" class="img-fluid rounded-top w-100" alt="">
+                        <div class="team-icon d-flex justify-content-center">
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary text-white rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content text-center border border-primary border-top-0 rounded-bottom p-4">
+                        <h5>Dr.Neel Verma</h5>
+                        <p class="mb-0">Data Scientist & Model Developer</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        <!-- Team End -->
+
+
+       
+
+
+        <!-- Blog Start -->
+        <div class="container-fluid blog py-5">
+    <div class="container py-5">
+        <div class="section-title mb-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="sub-style">
+                <h4 class="sub-title px-3 mb-0">Latest Articles</h4>
+            </div>
+            <h1 class="display-3 mb-4">Insights on Alzheimer’s Research & Early Detection</h1>
+            <p class="mb-0">
+                Stay informed with the latest updates on Alzheimer’s disease, machine learning innovations,
+                and early prediction techniques designed to help families and caregivers.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- Blog 1 -->
+            <div class="col-md-6 col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="blog-item rounded">
+                    <div class="blog-img">
+                        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQBBAMBIgACEQEDEQH/xAAcAAACAgMBAQAAAAAAAAAAAAAEBQMGAAIHAQj/xAA/EAACAQMCBAQDBgQEBQUBAAABAgMABBEFIQYSMUETIlFhFHGBByMyQpGhYnKxwRUkUtEWM0OS8GOC4eLxU//EABkBAAMBAQEAAAAAAAAAAAAAAAECAwQABf/EACURAAICAgICAwADAQEAAAAAAAABAhEDEiExBEETIlEUMmFCM//aAAwDAQACEQMRAD8A5opmZuYHHyoqHUbu26Fjil9tK3hli3apEnJ671pTZkaTHK8SXXJgISa1XU5bk/5hcA+tB2zAqcDep43aIglcintiNJBNykHwjtBGQ3qM0vs7oo6mYOwHY5q06PqEEUMsrofKvpmhzcW0nM3hjc9KfW+bJqdcBmmahYXCjnCg4/MOlHalqlrZ2pKuuT03FLLg2ml6PHfRafBd3c8jKnjDmWPAHb181CW+va+R9y1taj/0LZFP64pr9AUHLlCgCW9uTNDDJKSekaF/6VYrHRtXEQlgs7lc9VaMqP3qM6lrE4PxGq3b/wAspX+layQyyQePLKZV5+TzuWbpnOD2rhnGTH1nDqHKPj0itwP/AOtwg/vRDtpiZ8TVbEH/AErLzH9hVR+FzjEeM77LUTwj9Ka2J8f+nTdC404d0G1dDO80rHJMcRx+poif7XdLAPgWVw598CuSGHJ6n96i5KjKCk7ZeMnFUmdOn+12Rs+BpgA7cz0DN9qusSf8q1to/wBTVACn0rYA+hPy3oaL8G2/0t8v2icRzdLmNP5YxQ0nF3EEwy+py49FIFIIIi+WYhUX8RJA/rRMfhDAwTntzGilQKsOfWNTm3lvp2/92K0+KmY+eZ2PuTTDSNGm1B2VUhgwnMDNsWo+20ZQrc94qOGwURO3rmu39FF48quhIhlk2QMw9gTU0NtJJuZAB6c1W614fhhQXN0biaEdQGpbcQFji2umOdwr7HFdGaZ0sEoqxUlsyglmVQP3qRI15uUSDPyra5trqL7yWNymcB8eU/WhQSCCP1qhJ2uGF6fcmG8Rj0B5TTa8jHiZXod6rkh5ZfY1YtPkFxCoJ3AqkPwjkXtGkcOe1TCEY6UWIwK0nyq+XaqUSAZkUHLGoZZsJgYoa+ucMQW6UF8Wh/Pms888IPlmrH405q0SXKhh0yaV3FjcS/hXl+dEzX5U4XFDyX0jDdzWTJ5UX0jbj8Jrtgn+DzHcuAa9rY3IJ3z+tZUPnZo/iQKPbgsmM1PyMoBqOxBNNpLYeBzEdq1JWebJ0R6awJ3NOY1RhjakMEfL0brRYMiKCDVImach8bcGxlVOncilwV485G1SW00o0+fc5oI3DEAHOSaq6M6k7Lbo9uL7T5rQnLkiWEHu42x/7ht8+X0oQ24KqY8EHf02oe1mlslinRt1OfbFWdxFcNHcRgeHdguvs4wXX98/U+lMkPjy1wV+JeV1yhbfp60z+HgtJzFeEci78qHJKnsfrUs1nn8tGW9mslsTGipINiQozmi40V2FV14cpaWCR3CuBGhU8xUjp8qXzwnAHh8gySCxAyKYypIGKzSSbdt6GmtxIobkLBBjrv7UKGsAULHsZY85yN84/SvPucnzEnOdkxU6wLy5GxBwRsf6/wC1SiHw8uRLyjqdx+mwpG6CBuEwD4b4PTnOAahdj0CIuem2c/rXRdD0HTJLJBewLJJIvM0rEkjPpvjaqpOY45XWNwFViAchOh7biukCLsUQWt3dsVjicoi80hCHCj1NWfRdOWWM2vNbwmJTJ4jMBI23Qnt7DNDMiJbmQPlpDyvhyVIG+Pc5NLiyhgUkfw858pxyjODmoStm/HrDloPn1N4m8OFcBDsy9P16GjLLVrqFXUYaKUrs4yR32Paq3ZrJa30kfNyrzYZuw32qwy6/HPpXwS28avAeYvy7tnv+9TkmbMWSLsbTcQ3ItZbZZVMJJCnYEEdaRx6o8jENhkB3dhgL75pRaaj94CAoVDzE8p2Gd6k1G6GoTG5s7cQr0+HQ7J/+0da6JPOqLQmswy6WLfwQ0gkyXIxn6d6ivYJNQjkuoYo18FAZFjAXC+uKr7N4Ulsj+Z0HK657d/60ezzRLyykgrhWHLjy9j8u9UhGmZ8+VTXCB5fwLnrmmGj3K2/O07BEG+9AyqY+dFKlhvuf3pcyc5JuJs5P4RTznKP9UQx4ozX2fBaLjiq0VisQLe9LLziaR0IRMfOoLbT9PlwOfevNVt7KxkjjROdm3rPlnnq30bMMPGctV2LXv5JCS5O9RNOScqcUdeG3hSPyAM/5QelK7hWSbBAAO+1Ynz2zfrS4MMjc2c1snPLsorREMjYUU8sYYrONrifyqBkc3c1yVugN0DxaTOyBsdaylV1xHdNO5hcKmcAVlU+FkP5ESu2GOYD0NXG2s4ZrXMh25apWnt9/zepq4mNvg/K5XPcGt+Po8nN2Kp7QeIywuORWIB9RRttbKIx4hU0Nb28w5sSbZ2yKZxQ80QDOMiqxRjysLtbSKSCVQVAIoSXh7yCXxMjPTNH2VqRDIA/4sU6isENqqyEY7HPWqtIzJu+BWmmY085YHlHQ0y4atnuNKmiBwVYOjH8jjofluR8ial1O2FvpbGPY+tB8Jz3cVs5hjDg9Qx61zfAVGpDeL75M8uG/Mp/KR1FE2gEcoLfhIwajcNFcRzFeWO5ABHpJg4/7gD9V96caWljhxegcxxyljtimb+tmmAj1izSR0miGzjOaTmDDb9Ku9raQ3cz2pfEeSY2I3PsKW6npAhuHUEFR1I60i/CnqyqiEJNzBdj1wcVPFZxyalZo+OWSdRnHb6/KmD2hBwV2qGRFs2juymVgcOdugHU0JR4CnYDretz3N1OHuhHCGISJSOVVGwXAB7bnPrSV9QixyxEMSd1K4H6VZNd0KKVHurJueKUeIB1IGd8fI7VS7u2eE1LtD1RYZNZefRrS0ZIk8KR8MFGN8Hf9aDSRx9z4KEg4GBt/53oSwu4pLJrSWBGcvz8+TzdMY/v86a6VZG8EhSVYjbpzKZfKJD2HMepoJRXLKynOTSRrqNzBdTlre2WPlwhWMnDgbZ37mgXtWikV7fMkRIDRts2PT517NHPBMUuIVXJyCzcufr3+YogxzzcqKUEr7KfEUhvbGa7j0PtJvkG1WxntH+GuuSJwQznmzkdun+9aWl1bLdxPGTJFG2XRvLzqNzt71pqVtdwX1xFPOIXEjcyI2e/ttWttNbQJPHPFExljKCZx5l7krjvS2Lqrs2a9WW+llWNIULFgFX36UdNqU1/cePdzCRgoBwMEgdqXWsNvJgHBXO6nY0cYo7WJ3xjykKoG5PaqxRKc5WDzXfizNKMgH8PyoZ5Tnmzsa8C4jJcN1wpPeogMqR6UGdFhtpOY5lfJwaJ1OYSzQyZ6bGlUTfd/KpHcyqqDrUs1vHRo8ZqOVNnuooTIDnPpWW1lLO3MpOB1JqWGzklbmmflRfXvTjSbq3ZpocKIBEQXPZu1eclbPYbqxcbmy05PO/iS+gpHq2sS3vlJ5YxuFHeoLgfeNvnc70JJbSv+FPrWuGJRR5uTPKTr0RNMM1le/wCGznesp6IcAtuWBLAHarBpmpNdqsDkgD060s08Rtbvz4BxtWmmJzXJCvy4700XQs0mmWCR2hYqHOPevIrlWfAfeg9SAihBDEsetC6XE0twvmOM71RSpmScFVlwtpCltI3P/p/rW3+JMzKgk6e9C3nLDpkpWTBA7fMVXdFF1dainn8nNvmrOaTSMkcbknJPout/fyy2JjwSMdcVcuCNHnk0mOQhRkZG1JJrKOHTMlssN+ldD4HmX/AYMA7IKTNKo8F/EhtOpEGp8OvLpUgZ8sBzBVGCO/6ggH5iq/ZkzIQ+0kZKuP4h/wCZrpAlR1OTgjqMVRtctl07WFuY8C0uMCQ+m/lP0PlPsy+hqfjZftrI1+ThSW0TayiRruOEzRxyMCyhjuceg6mq/wAQcVPo+tyafdWCBV3Vy/4x6iuY8Ualepx+tx48iNHcoIsORyLkDApx9suoSNrOnQo2TDbmT6sf/rRyZJO69DY8UU1srsv1nrukanGMOIZc4w52oqe0EiZUB4zsSu4rnUXDWr2+g2WsWyG8tZ4hI/gjLxZ9V7j5VNofEN54nh2YllI/EiqWP6VJeTOPE0Xfi45843Q502/XQ9Um0m/l/wAqSJIHP/TB2H07H2HsKB1eSFtZktrNVcIobIHNkkA4HY9RU3FVrPqZ0+7WD4XUcmNYZmEZnX+EEgkg0pihm0jVUlmhIEZAlEZ5lUH1x070Fl+3HR0sf1VgmpXOqW7E3FlBJD1wqglf0Gf0qHSNU+IkfyhMH8NW+4n0q9Yx295G7H8oDfpnFIbvSPgZhcoE5ZTjmVgc/QGh5Kbhwx/GpTLFNF/iPC0yqp8a1+9jKjcj8w/Sqxpr3bJ4SgImTySv5SAfTO9O9E1SaxuYyrAqex7ijbnhu4fVfitP8JrGU86B5eUqT1TftmoYczapGnLgipbS6KneI8VzJBOOaRGwzYxUT2cjOpAOBv12pnq2j6rDeySXNszO7Z+7IcftRNmC0fLJEVYdmGP61uSPOm4roAitc7tGAe+KLa3JdeUl1HZun6UaEA6KaguIJ5GHgv4fzpnaXAkYpvnoAvEkSNFkQ4ByAelLniOc9PanM13d2nkvolkiPfrUIm065PIvNEx/SorMrqXBofiutoO0LLZYknBnB5fTpRn+FwzESWs/I3YMelT3eiuiiWH72MDqu9LJZpLU53H9qnktcrlFMMYNazVMlvLbUeQoWLr/AA0sFrdICgLhT1FNbXViBnnB9asGi3ltczcl1GjRsMHakWWHTRSXjz7TK7p2lo27kU3TS4QPxD9a94y0S70uEajpRaW0IyyjqlUkcTXI652rRHJFGOUGXB7CMNgVlVD/AIml75rKf5ICaSEAkdBy5wantZSjcwO5615JbPIoOMEV7HbyL2qHJd0MY5PHwshzTNYEsrJpQRkdPWkMayJIrHpmj9TndrZUTO/WqJ8GacLPZr+WbTZAzbZx+4obStRa1lz39qyKFm05gRvzioY7QqwJouUrTE1xqLiy2txPJNa+CzHer/wvx1YadpkUVyJg4UL5UyK40wKOO9OdNdWwHAwPeqXuqkZ0vjdwOq3XHcS3CyW4fwsnn5hil93xlHqMqWiq0kRJLZ67+n0zSOw0+zuY/OzZx1VsV5NoNtbKZ7e4lDruMnIoqCTtDrJJ9lH4qtriy4uD3LmVXlSSOQ/mTIx+1EfaXd/G8RmRPwpbxoPngn+9WTiTTW1TQ4rsJzXNsSUI6kfmX+4+tU+7ZJrC5vJwW+9WNCO+FH+9QmtWzbilsl/h2LhTWng4O4ftLKPmuruLlQE7KF2J+eSP0PpRWrcKXT2qBdZltZnnBkFugRHB6gY3z3yTVf8As4Xk0DQb2XcRStFv0C8xyfpzLXRNaglubQPb7zxMHVR+bHb6jIpu0J/VlR1DhOx0+0a7013N/jl8W4nJ589Rk9M9Ka6g2ka9DayWiIj8pWW2aLleJl6g+h3+o3GRS6e9N26O5+5U5Keh/wB6S2dvdapq8s1j4iLjlTkJViBnbOem1RaV0WhJsg1uNNBhu0ZHlhli5oQqAkMSAckjO2RuPX2yarZC4PnuX856IOiD0qz8WC4hUW7uTEXHiNISX26DPpnt3pLbupjYgYQY+u1Zs03dGzBBVsMLXAiEmAxPUnt7VcNHvIpImtJhmJxj5e4qlwErnGQCoOM96baNKIpl33O4z/571CEtZWjROKlGjzWLeTTZZbee+uviFk+5wg5ZI/UEkb4pZ/itxBl4buO8jU+aKVeVwPkf7VfNY06LV7CJ5lEjwjOMdvWua61c2FtdPFqMTpuMTKMsuehz3969VTdWeTKCUqGbXrTRm/sG8RRjxoDuY/ce1bxa7FIAs0OCepNVrS7iXSNXCseeLvy7q6Hr+oq1alY26o0UcfM46t6Vyg5cxY3zRj9ZR4B57m0lUhnwp7Uqm0ibLTWqmSPGTy77VHJplwzkRtt6GptDv5rLUViY+owT1qORT/7RpxPG/wDzfJrZ31zA3IjsF7jsaNbUFKN4tvG+3pUMsMjTO/hEAnbahmGH8w+YrLKev9WbFHb+xFK0LKTFbopaibJ/DUcowRQ3JyscdM1JC2G9Ki5NsoopIvXDepJJE1rc4eGQYZTvVF+0TgptLdtT0xS9lI3mUf8ATNNNOufBcEdqvFtd2t7beDKFeJl86HpV8eT0zJmxW7R868uegrK7BecDaBPcNIkrxg/lB2rKtsjNpI56i8y4ArPDbH4a9tXPicp2GKOUgdcYrSjKxYxA2I3rM5xmvL2aMSsM9DQ4nXO1K3QasZRn/KN86GbJOM1Lblns22/MBW6WzHfNPsS0ICue+TU8Ct+UUyg09DjNNbWxhXGR+1dYugiaK4V1ERkXbsxprZ219MgV5JCvcFjT9Le0XDSMoxRKXNlCPKymmTA4oi0+3uYrVoRkhsYGe9c24vgl0+5Nny4tXdpYt+hJHMPpgV1B9WjVD4QyR6VV+JrNtZsZXMXLKp54z6nuPrXZI3EbDPWQf9ntw44UiWTmMaSSKh7DfOP3rq/DLzzaRCbkEEEqvMNyo6Zrmf2IarB8LcaRL5ZkkMihu4NdhGdt6F/RIo192Itb4bS+55bOb4a4/MSuUk/mA7+4qsi6fhAJJrWnukIzi5tPvI267HOCv1H610VlwMY2FDXMCTRtFKiujDDKwyD8xSKNh2cTivGXFlpxBeB7CF44secyDBZvXFJbWYx79RnpmiPtG06w0LiHwbBGjjlXnMf5UOe1LZLa9s0je7t5Yo3GVdl8rD2NY82KV2b8GWGo5t7rcjbGMAelMLa5KOrAdNqrUU4B60fFdZ8pPaskrTNsao6Jo2s5kiVhk9CB+YVl3whpGp3rT6gJJIj/ANBW5Rj0J60Dwxb+DafEvvLKNs/lX/5p9HNjsa9HAmo8nm+Q1KXBpd8EcP39tEkMLWskS8sckTbD2IPUUHq2i3NuQ6IJlwASn9SKdQ3XL1PvRsc6ydN60QepmlHYoRsAVMjsob+lVTVraS3uPi7dS6Ickiuw3mk2t6QZQFf1FKNS0AGMwJy+GduY9BXZKmqBi2xStFA0zWDPYXCzrsuCp7itbmLnjEg777Vk+mXHD+oSJdRhraUnlkG4I/tUiyx8zQ8w5T+GvJyJp8nvYZRkuAYLntXvhj0rIWBLDGcE1JkVPkdpG9sgzvRryvbLzRv160CsgXrWlxcc+FHamQrXB7LqE3OfNXteWFj8ZE8p/wBZUb+wrKroyGyKrfxGEq8bDp2oPxp+zVNdy/cLmgxKlbZM8yKMaDxG5nJ5jU8VouRgfOhzdKNhW4uZCAAcClGHkEcUdi2Wx5q8FxEhwuWpbFcr8IysSW5hWsL5lpydDkaqV8qrjFef4lPz7NsaTeLyy49aLjNFCNBVxdzHq7frXsFxKcZOfrQzvlyPWpooWUcxNOib6HWnyu8iL2NX3TdMhurJkfYsuxx0PrVA0kYkU10PR7gJCM9MVVP9Is5BxFbXnDmvi8tS0MivkEdmzuPl3+tdK4d+13TZLOJdUjnS4UYYpGWUn12qD7RNIi1Kz+JiRgSOWRj0DflP9j9Kp/2Q5i4xksbmBXWWF1kWRc8uO9Tl9ZUaoyU4X7R2nS+NuH9VUfDahHzE45G2bPyp7zJJGrA9fzDcV878VWVv/wAeS2m1rEzquU25cjrV1+L1zgJkN7I+paFIBiY/jhPv7UUhLbKt9slxHJxJEE/FHHh8fOun8NLBf8M2njRxvA8S5V1yOlcI4v1aPVtdu7uBi0MjDkY+mB/fNdc+yaaS44Vi53JKZUb+howacmGcXGCZ7rHAek3RZ9P57Nz/AKPMv/aen0qja5oeo6Ef8yqSRE4WaJvKfn3B+ddM4g4l0/R1ZJJBJc42iQ5NUa7vdR4lm8JwUtz/ANJd/wBaGbx8clx2HD5GSD5ZaLGQR20MY6LGqj6DFHxyZpH4ctmI43OcKMH1oqC62GanrRTa+RhPceGAAckmjtMkJlXnbAwTSRpOadD7GjILjDHlrrGosayRykjxABU8UK/klz7VXBMiHJbc9qKgvACCM1xxNr/DNtrli9rFMIZDuCvr/L3rmOvcM6jo15BCsE8yOQFnVSVLen8P1rq1lIZbkMG5QN6fzzWskXnkQNjvjf5ipzin2h4TlHpnEH0L4QEXd74MgTmbmTC59AaI0Lhq/wBYiMqOsMR/CzjrV54j4YtdVure5+L2iPMbYuCjn59vrUY1GezURCykVU28q5pVhh+DfyMvQqh+z/P/AD70t/KtZL9nKEExXzA/xAUfJxQYvxIw+YxQk3Fz/kFH4sf4L8+X9ILXhHULCPwVeOQZLcy7daytG4xus+Vdqyn1iD5JnK+J+Hr7Rp8yfe2zfhmUbfX0pKo2q4TfaDMYvCvtNguInGGw/LkfLeq7dizu5/G0mG5hQ7mGXGFP8LZ3pZVfAI3XItYYats+lbEbnI8w2II3Fe9D0pRiUDmjVuwPWpiOQc1RiT7jlx33rDKWGOUUwhqzhpAxH1pjauh2BP6UBgkbnb9aKtlUkKQST0xRTBJF20fg2S6RJ5LiIozZOAcj0FWS44Us1sj4ZQuFO+Ns1RNH4hutN+6/Go98VYf+MWni8NoiNu561oi0ZZRfst32ecOW0SNdXJEvOMcrAFV3q/rpthJFyC3jA9lAqg8FcW6ZbWa290hRvU9KvC65pxi8WKeMrjsahk2b4NGLRR5Mn0DT5raS3kh5o5FKspJ6Vzfh/QbXh37Qr+GQjxHth8O5GzJk4J/iwMH+X3rqFtfx3UXPEdj7VTON9Nlv5Uu7KP8AztqvOrA4LINyPejC75Bk1SuJyP7VHhi4t8aJlLFVJwehBqy6n9oOiXfCpsrhjLO8XKU5ds4rm3F8Ph63I6SPJ4wEmGOcE9vl6UHZaRd3ToqQSOX6Ig3+tNu9nwFY46q2BxxvK/LGpq96Dr2qaXoY0y1ZIV3zIPxb/wBKFtOH7qJlRrOZSdgOXc1ctF4ajhZHvQsso38IfhT5nuaMYuImTJtwKNG0K61GUXEuQjHLTSdW+Wevzq4qmnaFahpmEQIwCTlnoLVeJINPKwafD8Zdfh+7IKp/vVWurp5bl5NRujNcZ2SUZjT6jr8qLyUKoWN73WbnUWDxxiC2jfynZi4+VewXcch+7Y564PalqASKbicIse2JY3Yk/wAq4/ep0InBSIxPH15BMQ+PUnek2sqlQ3imOd+1GxPtVdjvVWZY7UCdAfO/jZ5f5cjce+1O4pUXlLsAPWlHDY8sR2NTmRIF5pmwOw9aDkvooIS64b0oK3Z7xzPM+3Za4KGp1BpT5MqvapUkY9STQyFQPw4rcSHO1E4MUnGeg962W4WM/iP0NATTMQFBraBF/Nk11nUMzdLKMSCJh/Guajew0+4GJbOMg908p/avIjCv4kH1FTGaxB82x/gplyKwFuHNMY5V7lB/p2NZR/j2/wCV5cVlPUReT58gilvGRLK1aR+nMRn9ugqz6JwTey3UN3qMoVUYMIxudvWr/Y6Rb2MSrBEqAei0aEx2qei9jbfhVNf4RttTDTW5WC6/148rfzD+9c/1DS7rTpvAvojE474yG9wa7byDFC3+m2uoQNBdxLJGezDce4PY0HFAUjiYj8mykb963RObbFXLVeC7i0DSWJM8OSeUjzr/AL1XVtispVhjHtS6jbAsdsT8qIgjKSqe1SrH5mqW3TzAkdKKQsmRFD8RjB3ouKEDrRUkAEsZABzU1xDiMEbU6Js2sFOQTgVZLCQpjGB6k9KrunglgtOBN4CqSpO/amRNot1heTBPuJ3AHocLRMd5IX53nZ5PSPf96TaVNBLGGkiyT/qfAo9poYlwoL/LyijwjjmnHOnPp9y0/gc78xNvIdwUO/K3urE49j7Cm2g6lpxsUMIMLNjnDDJz8+/en+vapb2mly/ExiVZBgQDoa5a9/dy3Ly2sYtVGwSAYAA6UvsZO1ydMiukdiscin5Gp0lLKQDsRv7+1cyGtaxEVZXSc/6Xjyf2qPTOJLixnlZ7WRuYksnjsADnOwINK5NDqC9HShpOmlXVbWOPxB5zF5D+orSDhvT0k8SKW4xy4CGTmX65GT8s1S9H4wMaSx3VzcPgfdl4AcHtkhj/AEo6x4zucqtzHZMMEllmKnp6EfKltDqLLE3Dl685f/EbeVOn3kBVgPoxH7VDdaXqkavFFYiSAkgNDOpZx6kNy7+24ryHiuFokd7edQQDlCrjfOw3Hp+9FR8TWUmMT8ns4K/1rrQaEt/bS6XySLpkxuGXIPhF1i+ZGQW/YUPZSSwg3OpXQS0LYYuDzMx/Kue/r2q0rrYIzFIrL6q1eTavHKhjuYlkU9FdQR+9E4V38Hw6+Ej8yZ656iiLGXEQQdq0v5o5vOowMdPSh4W5RkEVzChsku5BqVZN6WeN3G49ak+IAXINAIzXzOPT1rJb5Y8rEvMaVyXTrEAp/FUlvyoMndjXHBgmmk/5jfQVKriFOZtz2GKFEiqMtsa8ecYywz7ZogCVkmcZ5gvtWUA1w7HNZROLDIMjGTWqpv1NeVlMTJVHX2FbIASoI615WUH0NEq3GnEl5oYUWcVu3N3lUnH6EVUXvpdUcXVysYlYb+GvKK8rKQZmjAeJmp441HNjtWVlEVkxOVBwM0TdHmtlJ7CsrKZCHmm7OGAGabugl5VboN9qyspl0LLsKtWZdgSAvSmpLC1aUMeYCsrK4VFE124kuJmaU5IJAqDSSIUblUHO+9ZWUvseXQfp0cZ1Bj4a5KdcUv1dU/zDeGgJOOlZWU76Jx/sinyysjsygAg+lRSys2ATsd6ysqDNSJIY8LlJJE/lbFFwTzomRcSYHYnIrKyuDYfBdyHlJC5x1xg/tTiJ5BkrK6/Jq9rK5gI576eNSeYNjpkf7UVYXUxKHnOCd16isrKAUY1xJDqLRo3kbflNMA7E7msrKKCSSsQV9t6KSQmsrKZCs8MjO+DXrMcVlZRONl3Ga9rKyuOP/9k=" class="img-fluid w-100" alt="Image">
+                    </div>
+                    <div class="blog-centent p-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <p class="mb-0 text-muted"><i class="fa fa-calendar-alt text-primary"></i> 12 Jan 2025</p>
+                            <a href="#" class="text-muted"><span class="fa fa-comments text-primary"></span> 5 Comments</a>
+                        </div>
+                        <a href="#" class="h4">Early Warning Signs of Alzheimer’s You Shouldn’t Ignore</a>
+                        <p class="my-4">
+                            Understanding subtle cognitive changes can help in detecting Alzheimer’s at its earliest stages,
+                            leading to better care and treatment outcomes.
+                        </p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-1">Read More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog 2 -->
+            <div class="col-md-6 col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="blog-item rounded">
+                    <div class="blog-img">
+                        <img src="data:image/jpeg;base64,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" class="img-fluid w-100" alt="Image">
+                    </div>
+                    <div class="blog-centent p-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <p class="mb-0 text-muted"><i class="fa fa-calendar-alt text-primary"></i> 04 Feb 2025</p>
+                            <a href="#" class="text-muted"><span class="fa fa-comments text-primary"></span> 12 Comments</a>
+                        </div>
+                        <a href="#" class="h4">How AI Is Transforming Alzheimer’s Diagnosis</a>
+                        <p class="my-4">
+                            Machine learning models are now capable of detecting early-stage Alzheimer’s with high accuracy,
+                            offering hope for earlier and more reliable diagnoses.
+                        </p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-1">Read More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog 3 -->
+            <div class="col-md-6 col-lg-6 col-xl-4 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="blog-item rounded">
+                    <div class="blog-img">
+                        <img src="https://ippez.pl/wp-content/uploads/2024/12/Depositphotos_29715187_XL-kopia.jpg" class="img-fluid w-100" alt="Image">
+                    </div>
+                    <div class="blog-centent p-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <p class="mb-0 text-muted"><i class="fa fa-calendar-alt text-primary"></i> 22 Feb 2025</p>
+                            <a href="#" class="text-muted"><span class="fa fa-comments text-primary"></span> 8 Comments</a>
+                        </div>
+                        <a href="#" class="h4">Lifestyle Habits That Reduce Alzheimer’s Risk</a>
+                        <p class="my-4">
+                            Research shows that exercise, nutrition, quality sleep, and cognitive activities can significantly
+                            reduce the risk of Alzheimer’s progression.
+                        </p>
+                        <a href="#" class="btn btn-primary rounded-pill text-white py-2 px-4 mb-1">Read More</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        <!-- Blog End -->
+
+        <!-- Footer Start -->
+<div class="container-fluid bg-dark text-light footer pt-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-5">
+
+            <!-- About Section -->
+            <div class="col-lg-4 col-md-6">
+                <h4 class="text-white mb-4">About Us</h4>
+                <p class="mb-3">
+                    We aim to support early detection and awareness of Alzheimer’s disease 
+                    using advanced Machine Learning-based prediction tools. 
+                    Empowering families and healthcare professionals with timely insights.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-4 col-md-6">
+                <h4 class="text-white mb-4">Quick Links</h4>
+                <a class="btn btn-link text-light" href="{% url 'users-home' %}">Home</a>
+                <a class="btn btn-link text-light" href="{% url 'model' %}">ML Prediction</a>
+                <a class="btn btn-link text-light" href="{% url 'Deploy_8' %}">DL Prediction</a>
+                <a class="btn btn-link text-light" href="#">About Alzheimer’s</a>
+                <a class="btn btn-link text-light" href="#">Contact Us</a>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="col-lg-4 col-md-6">
+                <h4 class="text-white mb-4">Contact Information</h4>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Chennai, India</p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 98765 43210</p>
+                <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@alzpredict.com</p>
+
+                <div class="d-flex pt-3">
+                    <a class="btn btn-square btn-outline-light rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-square btn-outline-light rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-square btn-outline-light rounded-circle me-2" href="#"><i class="fab fa-instagram"></i></a>
+                    <a class="btn btn-square btn-outline-light rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% endif %}
+<!-- Footer End -->
+
+        <!-- Footer Start -->
+       
+        <!-- JavaScript Libraries -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/static/lib/wow/wow.min.js"></script>
+        <script src="/static/lib/easing/easing.min.js"></script>
+        <script src="/static/lib/waypoints/waypoints.min.js"></script>
+        <script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>
+        
+
+        <!-- Template Javascript -->
+        <script src="/static/js/main.js"></script>
+        
+    </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

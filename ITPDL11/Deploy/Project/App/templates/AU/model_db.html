@@ -1,0 +1,195 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Records Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* General page styling */
+        body {
+            background: url('https://www.shyamparivar.com/uploads/gallery/Sky-and-Moon-Dark-Wallpaper-for-Desktop-and-Laptop.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Container for table */
+        .table-container {
+            width: 90%;
+            margin: 40px auto;
+            overflow-x: auto;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff; /* White background for the table */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+        }
+
+        /* Caption styling */
+        caption {
+            font-size: 1.8em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #007bff; /* Hospital blue color for caption */
+        }
+
+        /* Header row styling */
+        thead tr {
+            background-color: #0069d9; /* Hospital blue background */
+            color: white;
+        }
+
+        /* Table cell and row styling */
+        td, th {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Alternate row background color */
+        tbody tr:nth-child(even) {
+            background-color: #f1f1f1; /* Light gray */
+        }
+
+        /* Audio cell styling */
+        .audio-cell audio {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect for audio players */
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+
+            .audio-cell audio {
+                max-width: 200px; /* Smaller audio player on smaller screens */
+            }
+        }
+
+        /* Search input styling */
+        .search-container {
+            margin: 20px auto;
+            width: 90%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-container input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Sorting icon styling */
+        th.sortable {
+            cursor: pointer;
+            position: relative;
+        }
+
+        th.sortable::after {
+            content: "\f0dc";
+            font-family: FontAwesome;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        th.sortable.sorted-asc::after {
+            content: "\f0de";
+        }
+
+        th.sortable.sorted-desc::after {
+            content: "\f0dd";
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search records...">
+    </div>
+    
+    <div class="table-container">
+        <table id="records-table">
+            <caption> Records Database</caption>
+            <thead>
+                <tr>
+                    <th class="sortable" data-sort="audio">Audio</th>
+                    <th class="sortable" data-sort="prediction">Diagnosis Label</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model in models %}
+                <tr>
+                    <td class="audio-cell">
+                        <audio controls>
+                            <source src="{{ model.audio_file.url }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </td>
+                    <td>{{ model.prediction }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Search functionality
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#records-table tbody tr');
+                rows.forEach(row => {
+                    const audioCell = row.cells[0].textContent.toLowerCase();
+                    const diagnosisCell = row.cells[1].textContent.toLowerCase();
+                    const match = audioCell.includes(searchTerm) || diagnosisCell.includes(searchTerm);
+                    row.style.display = match ? '' : 'none';
+                });
+            });
+
+            // Sorting functionality
+            const headers = document.querySelectorAll('#records-table th.sortable');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const table = document.getElementById('records-table');
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const columnIndex = Array.from(header.parentElement.children).indexOf(header);
+                    const sortOrder = header.classList.contains('sorted-asc') ? 'desc' : 'asc';
+
+                    rows.sort((a, b) => {
+                        const aText = a.cells[columnIndex].textContent.trim();
+                        const bText = b.cells[columnIndex].textContent.trim();
+                        if (aText < bText) return sortOrder === 'asc' ? -1 : 1;
+                        if (aText > bText) return sortOrder === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+
+                    rows.forEach(row => tbody.appendChild(row));
+
+                    headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+                    header.classList.add(sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                });
+            });
+        });
+    </script>
+</body>
+{% endblock content %}
