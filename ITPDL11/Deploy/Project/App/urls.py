@@ -30,6 +30,7 @@ urlpatterns = [
      path('mlDatabase/',views.mlDatabase,name='ml_Database'),
     path('logout_view/',logout_view,name='logout_view'),
     path('model/',views.model,name='model'),
-    path('apply_filter_ajax/', views.apply_filter_ajax, name='apply_filter_ajax'),
-    path('predict_denoised/',  views.predict_denoised,  name='predict_denoised'),
+    path('select_filter/<int:image_id>/', views.select_filter,    name='select_filter'),
+    path('apply_filter_ajax/',           views.apply_filter_ajax, name='apply_filter_ajax'),
+    path('predict_denoised/',            views.predict_denoised,  name='predict_denoised'),
 ]

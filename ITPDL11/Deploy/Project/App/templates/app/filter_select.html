@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRI Noise Removal – Step 2</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      background-image: url('https://t4.ftcdn.net/jpg/01/33/33/41/360_F_133334155_X23HzbJKawbIgXVaub4bPM8CjpkS5uMS.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* Glassmorphism card */
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(14px);
+      border-radius: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+      overflow: hidden;
+      color: #111;
+    }
+
+    /* ── Step indicator ── */
+    .steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 22px 30px 10px;
+      background: rgba(255,255,255,0.15);
+    }
+    .step {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step.done   { background: #43a047; color: white; }
+    .step.active { background: #0053d6; color: white; box-shadow: 0 2px 10px rgba(0,83,214,.5); }
+    .step.inactive { background: rgba(255,255,255,0.45); color: #444; }
+    .step-line { flex: 1; max-width: 60px; height: 2px; background: rgba(255,255,255,0.5); }
+    .step-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .step-label { font-size: 10px; font-weight: 600; color: #222; }
+
+    /* ── Body ── */
+    .body { padding: 28px 32px 24px; }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 22px;
+      color: #000;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── Uploaded image thumbnail ── */
+    .thumb-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 26px;
+      border: 1.5px solid rgba(255,255,255,0.7);
+    }
+    .thumb-row img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 3px solid white;
+      flex-shrink: 0;
+    }
+    .thumb-info { flex: 1; }
+    .thumb-info .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #0053d6;
+      margin-bottom: 4px;
+    }
+    .thumb-info .filename {
+      font-size: 13px;
+      color: #222;
+      word-break: break-all;
+    }
+    .tick { color: #43a047; font-size: 22px; }
+
+    /* ── Filter selection ── */
+    .filter-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 10px;
+    }
+
+    /* Filter option cards (radio-based) */
+    .filter-options { display: flex; flex-direction: column; gap: 8px; }
+
+    .filter-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255,255,255,0.5);
+      border: 2px solid rgba(255,255,255,0.7);
+      border-radius: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .filter-option:hover { background: rgba(255,255,255,0.7); border-color: #90caf9; }
+    .filter-option input[type="radio"] { margin-top: 3px; accent-color: #0053d6; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+    .filter-option input[type="radio"]:checked ~ .opt-content { color: #0053d6; }
+    .filter-option:has(input:checked) { background: rgba(0,83,214,0.1); border-color: #0053d6; }
+
+    .opt-content { flex: 1; }
+    .opt-title { font-size: 14px; font-weight: 600; color: #111; }
+    .opt-desc  { font-size: 11px; color: #555; margin-top: 2px; }
+    .opt-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #e3f2fd;
+      color: #1565c0;
+      font-weight: 600;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .opt-badge.skip-badge { background: #f3e5f5; color: #6a1b9a; }
+
+    /* ── Proceed button ── */
+    .proceed-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 14px;
+      margin-top: 22px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #0053d6, #003c9e);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.25s;
+      letter-spacing: 0.4px;
+    }
+    .proceed-btn:hover { background: linear-gradient(135deg, #003c9e, #002880); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,83,214,0.4); }
+
+    /* ── Back link ── */
+    .back-row {
+      text-align: center;
+      padding: 14px 32px 20px;
+      border-top: 1px solid rgba(255,255,255,0.35);
+    }
+    .back-link {
+      font-size: 13px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+    .back-link:hover { opacity: 1; text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Step indicator -->
+  <div class="steps">
+    <div class="step-wrap">
+      <div class="step done"><i class="fas fa-check" style="font-size:13px;"></i></div>
+      <span class="step-label">Upload</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-wrap">
+      <div class="step active">2</div>
+      <span class="step-label">Filter</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-wrap">
+      <div class="step inactive">3</div>
+      <span class="step-label">Result</span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <h1><i class="fas fa-filter" style="color:#0053d6; margin-right:8px;"></i>Select Noise Removal Filter</h1>
+
+    <!-- Uploaded image thumbnail -->
+    <div class="thumb-row">
+      <img src="{{ image_url }}" alt="Uploaded MRI">
+      <div class="thumb-info">
+        <div class="label">&#10003; Image Uploaded</div>
+        <div class="filename">MRI Scan ready for processing</div>
+      </div>
+      <i class="fas fa-check-circle tick"></i>
+    </div>
+
+    <!-- Filter form -->
+    <form method="post" action="{% url 'select_filter' image_id %}">
+      {% csrf_token %}
+
+      <span class="filter-label"><i class="fas fa-sliders-h"></i> Choose a denoising algorithm:</span>
+
+      <div class="filter-options">
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="skip" checked>
+          <div class="opt-content">
+            <div class="opt-title">Skip</div>
+            <div class="opt-desc">No noise removal — run prediction directly</div>
+          </div>
+          <span class="opt-badge skip-badge">Direct</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="gaussian">
+          <div class="opt-content">
+            <div class="opt-title">Gaussian Filter</div>
+            <div class="opt-desc">Smooths Gaussian / thermal noise from scanner hardware</div>
+          </div>
+          <span class="opt-badge">Gaussian noise</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="median">
+          <div class="opt-content">
+            <div class="opt-title">Median Filter</div>
+            <div class="opt-desc">Removes salt-and-pepper artefacts &amp; motion spikes</div>
+          </div>
+          <span class="opt-badge">Salt &amp; pepper</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="bilateral">
+          <div class="opt-content">
+            <div class="opt-title">Bilateral Filter</div>
+            <div class="opt-desc">Edge-preserving smoothing for Rician noise</div>
+          </div>
+          <span class="opt-badge">Rician noise</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="nlm">
+          <div class="opt-content">
+            <div class="opt-title">Non-Local Means Denoising</div>
+            <div class="opt-desc">Patch-based averaging for speckle &amp; Rician noise</div>
+          </div>
+          <span class="opt-badge">Speckle / Rician</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="anisotropic">
+          <div class="opt-content">
+            <div class="opt-title">Anisotropic Diffusion</div>
+            <div class="opt-desc">Perona-Malik diffusion — preserves tissue boundaries</div>
+          </div>
+          <span class="opt-badge">Speckle noise</span>
+        </label>
+
+        <label class="filter-option">
+          <input type="radio" name="filter_type" value="wavelet">
+          <div class="opt-content">
+            <div class="opt-title">Wavelet Denoising</div>
+            <div class="opt-desc">Multi-scale BayesShrink for general MRI noise</div>
+          </div>
+          <span class="opt-badge">General MRI</span>
+        </label>
+
+      </div>
+
+      <button type="submit" class="proceed-btn">
+        <i class="fas fa-arrow-right"></i> Proceed
+      </button>
+    </form>
+  </div>
+
+  <!-- Back -->
+  <div class="back-row">
+    <a href="{% url 'Deploy_8' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back — Re-upload Image
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html>

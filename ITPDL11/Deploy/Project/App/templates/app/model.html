@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deployment – File Upload</title>
+  <title>MRI Upload – Step 1</title>
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-
-      /* Background */
       background-image: url('https://t4.ftcdn.net/jpg/01/33/33/41/360_F_133334155_X23HzbJKawbIgXVaub4bPM8CjpkS5uMS.jpg');
       background-size: cover;
       background-position: center;
@@ -24,155 +24,190 @@
 
     /* Glass Card */
     #up-wrap {
-      width: 420px;
-      background: rgba(255, 255, 255, 0.25);
-      padding: 35px;
-      border-radius: 18px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      width: 440px;
+      background: rgba(255, 255, 255, 0.22);
+      padding: 38px 35px 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
       text-align: center;
       color: black;
     }
 
-    h1 {
-      margin-top: 10px;
-      margin-bottom: 25px;
-      font-size: 32px;
-      letter-spacing: 2px;
-      color: black;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    /* Step indicator */
+    .steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
     }
+    .step {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .step.active  { background: #0053d6; color: white; box-shadow: 0 2px 8px rgba(0,83,214,.45); }
+    .step.inactive { background: rgba(255,255,255,0.45); color: #444; }
+    .step-line { flex: 1; max-width: 50px; height: 2px; background: rgba(255,255,255,0.5); }
+    .step-label { font-size: 11px; font-weight: 600; color: #222; margin-top: 4px; }
 
-    /* SVG Icon */
+    /* Upload icon */
     .upload-icon {
-      width: 85px;
-      height: 85px;
-      margin: auto;
+      width: 80px; height: 80px;
+      margin: 0 auto 6px;
       background-size: contain;
       background-repeat: no-repeat;
       background-image: url('data:image/png;base64,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');
     }
 
-    /* Upload Button */
-    .upload-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-      background: #0053d6;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
+    h1 {
+      margin: 8px 0 20px;
+      font-size: 28px;
+      letter-spacing: 1.5px;
+      color: black;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
 
-    .upload-btn:hover {
-      background: #003c9e;
-      transform: translateY(-2px);
+    /* File input styling */
+    .file-label {
+      display: block;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 6px;
     }
+
+    /* Image preview (shown after file selected) */
+    #imgPreview {
+      display: none;
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      margin-top: 14px;
+      border-radius: 10px;
+      border: 3px solid rgba(255,255,255,0.8);
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* Next Button */
+    .next-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #0053d6, #003c9e);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      letter-spacing: 0.5px;
+    }
+    .next-btn:hover { background: linear-gradient(135deg, #003c9e, #002880); transform: translateY(-2px); }
+    .next-btn:disabled { background: #90a4c8; cursor: not-allowed; transform: none; }
+
+    /* Arrow icon */
+    .arrow { font-size: 18px; }
 
     /* Home Button */
     .home-btn {
-      margin-top: 20px;
+      margin-top: 18px;
       display: inline-block;
-      padding: 10px 22px;
+      padding: 9px 22px;
       border-radius: 10px;
-      background: rgba(214, 54, 54, 0.829);
-      color: black;
+      background: rgba(214, 54, 54, 0.8);
+      color: white;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 14px;
       transition: 0.3s;
     }
+    .home-btn:hover { background: rgba(180, 30, 30, 0.9); }
 
-    .home-btn:hover {
-      background: rgba(255,255,255,0.5);
-    }
-
-    /* Uploaded image preview */
-    img {
-      margin-top: 20px;
-      border-radius: 10px;
-      border: 3px solid #ffffff;
-    }
-
-    /* Noise filter dropdown */
-    .filter-group {
-      margin-top: 18px;
-      text-align: left;
-    }
-    .filter-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: #111;
-    }
-    .filter-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.85);
-      font-size: 14px;
-      color: #222;
-      cursor: pointer;
-    }
-    .filter-group select:focus {
-      outline: none;
-      border-color: #0053d6;
-    }
-    .filter-hint {
+    /* Validation message */
+    .file-hint {
       font-size: 11px;
-      color: #333;
+      color: #222;
       margin-top: 5px;
-      opacity: 0.85;
+      text-align: left;
+      opacity: 0.8;
     }
-
   </style>
 </head>
 
 <body>
-
   <div id="up-wrap">
 
+    <!-- Step indicator -->
+    <div class="steps">
+      <div>
+        <div class="step active">1</div>
+        <div class="step-label">Upload</div>
+      </div>
+      <div class="step-line"></div>
+      <div>
+        <div class="step inactive">2</div>
+        <div class="step-label">Filter</div>
+      </div>
+      <div class="step-line"></div>
+      <div>
+        <div class="step inactive">3</div>
+        <div class="step-label">Result</div>
+      </div>
+    </div>
+
     <div class="upload-icon"></div>
+    <h1>Upload MRI Scan</h1>
 
-    <h1>Deployment</h1>
-
-    <form action="" method="post" enctype="multipart/form-data">
+    <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <p style="color:black;">{{ form.as_p }}</p>
+      <label class="file-label">Select MRI Image (.jpg / .png)</label>
+      {{ form.image }}
+      <p class="file-hint">Supported formats: JPEG, PNG</p>
 
-      <!-- Noise Removal Filter Selection -->
-      <div class="filter-group">
-        <label for="filterType">&#128302; Noise Removal Filter</label>
-        <select name="filter_type" id="filterType">
-          <option value="skip">Skip (No noise removal)</option>
-          <option value="gaussian">Gaussian Filter — Gaussian noise</option>
-          <option value="median">Median Filter — Salt-and-pepper noise</option>
-          <option value="bilateral">Bilateral Filter — Rician noise (edge-preserving)</option>
-          <option value="nlm">Non-Local Means Denoising — Speckle / Rician noise</option>
-          <option value="anisotropic">Anisotropic Diffusion — Speckle noise</option>
-          <option value="wavelet">Wavelet Denoising — General MRI noise</option>
-        </select>
-        <p class="filter-hint">Selecting a filter shows a preview before prediction. "Skip" runs prediction immediately.</p>
-      </div>
+      <!-- Live image preview before submit -->
+      <img id="imgPreview" alt="Selected image preview">
 
-      <button class="upload-btn" type="submit">Upload File</button>
+      <button class="next-btn" type="submit" id="nextBtn" disabled>
+        Next <span class="arrow">&#8594;</span>
+      </button>
     </form>
 
-    {% if obj %}
-      <img src="{{ obj.image.url }}" height="300" width="300">
-      <h2 style="color:black; margin-top:10px;">{{ predict|upper }}</h2>
-    {% endif %}
-
-    <a href="/" class="home-btn">Home</a>
+    <a href="/" class="home-btn">&#8962; Home</a>
 
   </div>
 
+  <script>
+    // Show preview and enable Next button when a file is chosen
+    const fileInput = document.querySelector('input[type="file"]');
+    const preview   = document.getElementById('imgPreview');
+    const nextBtn   = document.getElementById('nextBtn');
+
+    fileInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Next <span class="arrow">&#8594;</span>';
+      } else {
+        preview.style.display = 'none';
+        nextBtn.disabled = true;
+      }
+    });
+  </script>
 </body>
 </html>

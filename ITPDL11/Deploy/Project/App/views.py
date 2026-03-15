@@ -176,57 +176,70 @@ def _run_prediction(image_array):
 
 def Deploy_8(request):
     """
-    Image upload view — now with noise filter selection.
+    Step 1 — Image upload only.
 
-    GET  : Render the upload form with the filter dropdown.
-    POST : Save the uploaded image, then:
-           - If filter_type == "skip": run prediction directly → output.html
-           - Otherwise: apply selected filter, render the preview page so
-             the user can compare original vs denoised before predicting.
+    GET  : Render the upload form (model.html).
+    POST : Save the uploaded image, then redirect to the filter
+           selection page (Step 2) passing the saved image ID.
     """
     if request.method == "POST":
         form = forms.UserImageForm(files=request.FILES)
         if form.is_valid():
             form.save()
-        obj = form.instance
 
         result1 = UserImageModel.objects.latest('id')
-        filter_type = request.POST.get("filter_type", "skip").strip().lower()
+        return redirect('select_filter', image_id=result1.id)
 
-        # Load original image as numpy array
-        original_array = load_image_for_preview(result1.image.path)
+    form = forms.UserImageForm()
+    return render(request, 'app/model.html', {'form': form})
+
+
+def select_filter(request, image_id):
+    """
+    Step 2 — Noise filter selection.
+
+    GET  : Show the filter selection page with a thumbnail of the uploaded image.
+    POST : Read chosen filter_type, then:
+           - "skip"  → run prediction directly → output.html
+           - other   → apply filter → preview.html (side-by-side comparison)
+    """
+    try:
+        record = UserImageModel.objects.get(id=image_id)
+    except UserImageModel.DoesNotExist:
+        return redirect('Deploy_8')
+
+    if request.method == "POST":
+        filter_type = request.POST.get("filter_type", "skip").strip().lower()
+        original_array = load_image_for_preview(record.image.path)
 
         if filter_type == "skip":
-            # ── No noise removal: run prediction immediately ──────────────
+            # ── Direct prediction ─────────────────────────────────────────
             a, b = _run_prediction(original_array)
-
-            record = UserImageModel.objects.latest('id')
             record.label = a
             record.save()
-
             return render(request, 'App/output.html', {
-                'form': form, 'obj': obj, 'predict': a, 'predict1': b
+                'obj': record, 'predict': a, 'predict1': b
             })
 
         else:
-            # ── Apply chosen filter and show preview ──────────────────────
+            # ── Apply filter → show preview before predicting ─────────────
             filtered_array = apply_selected_filter(original_array, filter_type)
-
-            original_b64 = image_to_base64(original_array)
-            filtered_b64 = image_to_base64(filtered_array)
+            original_b64   = image_to_base64(original_array)
+            filtered_b64   = image_to_base64(filtered_array)
 
             return render(request, 'app/preview.html', {
-                'original_image':       original_b64,
-                'filtered_image':       filtered_b64,
-                'image_id':             result1.id,
-                'current_filter':       filter_type,
+                'original_image':         original_b64,
+                'filtered_image':         filtered_b64,
+                'image_id':               record.id,
+                'current_filter':         filter_type,
                 'current_filter_display': _FILTER_DISPLAY_NAMES.get(filter_type, filter_type),
             })
 
-    else:
-        form = forms.UserImageForm()
-
-    return render(request, 'app/model.html', {'form': form})
+    # GET — show filter selection page
+    return render(request, 'app/filter_select.html', {
+        'image_id':  record.id,
+        'image_url': record.image.url,
+    })
 
 
 def apply_filter_ajax(request):
