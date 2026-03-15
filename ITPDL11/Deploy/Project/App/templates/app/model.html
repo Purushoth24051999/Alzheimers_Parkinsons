@@ -98,6 +98,39 @@
       border: 3px solid #ffffff;
     }
 
+    /* Noise filter dropdown */
+    .filter-group {
+      margin-top: 18px;
+      text-align: left;
+    }
+    .filter-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #111;
+    }
+    .filter-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.85);
+      font-size: 14px;
+      color: #222;
+      cursor: pointer;
+    }
+    .filter-group select:focus {
+      outline: none;
+      border-color: #0053d6;
+    }
+    .filter-hint {
+      font-size: 11px;
+      color: #333;
+      margin-top: 5px;
+      opacity: 0.85;
+    }
+
   </style>
 </head>
 
@@ -113,6 +146,21 @@
       {% csrf_token %}
 
       <p style="color:black;">{{ form.as_p }}</p>
+
+      <!-- Noise Removal Filter Selection -->
+      <div class="filter-group">
+        <label for="filterType">&#128302; Noise Removal Filter</label>
+        <select name="filter_type" id="filterType">
+          <option value="skip">Skip (No noise removal)</option>
+          <option value="gaussian">Gaussian Filter — Gaussian noise</option>
+          <option value="median">Median Filter — Salt-and-pepper noise</option>
+          <option value="bilateral">Bilateral Filter — Rician noise (edge-preserving)</option>
+          <option value="nlm">Non-Local Means Denoising — Speckle / Rician noise</option>
+          <option value="anisotropic">Anisotropic Diffusion — Speckle noise</option>
+          <option value="wavelet">Wavelet Denoising — General MRI noise</option>
+        </select>
+        <p class="filter-hint">Selecting a filter shows a preview before prediction. "Skip" runs prediction immediately.</p>
+      </div>
 
       <button class="upload-btn" type="submit">Upload File</button>
     </form>

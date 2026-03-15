@@ -123,65 +123,185 @@ from . import forms
 from .forms import UserImageForm
 from PIL import Image
 import os
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+from .preprocessing.noise_filters import apply_selected_filter
+from .preprocessing.image_pipeline import load_image_for_preview, prepare_for_model, image_to_base64
 
 
-def Deploy_8(request): 
-    print("HI")
+# Human-readable labels for each filter key (used in preview.html)
+_FILTER_DISPLAY_NAMES = {
+    "skip":        "Skip (No noise removal)",
+    "gaussian":    "Gaussian Filter",
+    "median":      "Median Filter",
+    "bilateral":   "Bilateral Filter",
+    "nlm":         "Non-Local Means Denoising",
+    "anisotropic": "Anisotropic Diffusion",
+    "wavelet":     "Wavelet Denoising",
+}
+
+
+def _run_prediction(image_array):
+    """
+    Run the Keras LeNet model on a preprocessed image array and return
+    the predicted class name and description string.
+
+    Args:
+        image_array: uint8 RGB numpy array (any size — will be resized internally).
+
+    Returns:
+        (predicted_class_str, description_str)
+    """
+    model = keras.models.load_model('App/keras_model.h5')
+    data = prepare_for_model(image_array)
+    classes = ["MildDemented", "ModerateDemented", "Non_Parkinson",
+               "NonDemented", "Parkinson", "VeryMildDemented"]
+    prediction = model.predict(data)
+    idd = np.argmax(prediction)
+    a = classes[idd]
+
+    descriptions = {
+        "MildDemented":     "This image Detected in Mild_Demented",
+        "ModerateDemented": "This image Detected in Moderate_Demented",
+        "Non_Parkinson":    "This image Detected in Non_Parkinson",
+        "NonDemented":      "This image Detected in Non_Demented",
+        "Parkinson":        "This image Detected in Parkinson",
+        "VeryMildDemented": "This image Detected in Very_Mild_Impairment",
+    }
+    b = descriptions.get(a, "WRONG INPUT")
+    return a, b
+
+
+def Deploy_8(request):
+    """
+    Image upload view — now with noise filter selection.
+
+    GET  : Render the upload form with the filter dropdown.
+    POST : Save the uploaded image, then:
+           - If filter_type == "skip": run prediction directly → output.html
+           - Otherwise: apply selected filter, render the preview page so
+             the user can compare original vs denoised before predicting.
+    """
     if request.method == "POST":
         form = forms.UserImageForm(files=request.FILES)
         if form.is_valid():
-            print('HIFORM')
             form.save()
         obj = form.instance
 
         result1 = UserImageModel.objects.latest('id')
-        models = keras.models.load_model('App/keras_model.h5')
-        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-        image = Image.open(result1.image.path).convert("RGB")
-        size = (224, 224)
-        image = ImageOps.fit(image, size, Image.ANTIALIAS)
-        image_array = np.asarray(image)
-        normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1
-        data[0] = normalized_image_array
-        classes = ["MildDemented","ModerateDemented","Non_Parkinson","NonDemented","Parkinson","VeryMildDemented"]
-        prediction = models.predict(data)
-        idd = np.argmax(prediction)
-        a = (classes[idd])
-        if a == "MildDemented":
-             b ='This image Detected in Mild_Demented'
-        elif a == "ModerateDemented":
-            b ='This image Detected in Moderate_Demented'
-        elif a == "Non_Parkinson":
-            b ='This image Detected in Non_Parkinson'
-        elif a == "NonDemented":
-            b ='This image Detected in Non_Demented'
-        elif a == "Parkinson":
-            b ='This image Detected in Parkinson'
-        elif a == "VeryMildDemented":
-            b ='This image Detected in Very_Mild_Impairment'
-        
+        filter_type = request.POST.get("filter_type", "skip").strip().lower()
+
+        # Load original image as numpy array
+        original_array = load_image_for_preview(result1.image.path)
+
+        if filter_type == "skip":
+            # ── No noise removal: run prediction immediately ──────────────
+            a, b = _run_prediction(original_array)
+
+            record = UserImageModel.objects.latest('id')
+            record.label = a
+            record.save()
+
+            return render(request, 'App/output.html', {
+                'form': form, 'obj': obj, 'predict': a, 'predict1': b
+            })
+
         else:
-            b = 'WRONG INPUT'
+            # ── Apply chosen filter and show preview ──────────────────────
+            filtered_array = apply_selected_filter(original_array, filter_type)
 
-        data = UserImageModel.objects.latest('id')
-        data.label = a
-        data.save()
+            original_b64 = image_to_base64(original_array)
+            filtered_b64 = image_to_base64(filtered_array)
 
-        # engine = pyttsx3.init()
-        # rate = engine.getProperty('rate')
-        # engine.setProperty('rate', rate - 10)  # Decrease rate by 50 (default rate is typically around 200)
-        # engine.say(a)
-        # engine.runAndWait()
+            return render(request, 'app/preview.html', {
+                'original_image':       original_b64,
+                'filtered_image':       filtered_b64,
+                'image_id':             result1.id,
+                'current_filter':       filter_type,
+                'current_filter_display': _FILTER_DISPLAY_NAMES.get(filter_type, filter_type),
+            })
 
-        
-        # text_to_speech(a, delay=7)
-
-        
-        return render(request, 'App/output.html',{'form':form,'obj':obj,'predict':a,'predict1':b})
     else:
-        
         form = forms.UserImageForm()
-    return render(request, 'app/model.html',{'form':form})
+
+    return render(request, 'app/model.html', {'form': form})
+
+
+def apply_filter_ajax(request):
+    """
+    AJAX endpoint: re-apply a noise filter to an already-uploaded image.
+
+    Called from the preview page when the user clicks "Apply Filter" after
+    selecting a different filter from the dropdown — no page reload needed.
+
+    POST body (JSON): { "image_id": <int>, "filter_type": <str> }
+
+    Returns JSON: { "filtered_image": "<data-URI>" }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        image_id    = int(body.get("image_id", 0))
+        filter_type = str(body.get("filter_type", "skip")).strip().lower()
+    except (ValueError, TypeError, json.JSONDecodeError) as exc:
+        return JsonResponse({"error": str(exc)}, status=400)
+
+    try:
+        record = UserImageModel.objects.get(id=image_id)
+    except UserImageModel.DoesNotExist:
+        return JsonResponse({"error": "Image not found"}, status=404)
+
+    original_array = load_image_for_preview(record.image.path)
+    filtered_array = apply_selected_filter(original_array, filter_type)
+    filtered_b64   = image_to_base64(filtered_array)
+
+    return JsonResponse({"filtered_image": filtered_b64})
+
+
+def predict_denoised(request):
+    """
+    Final prediction view — called when user clicks "Proceed to Prediction"
+    on the preview page.
+
+    POST form fields:
+        image_id    : int — primary key of the saved UserImageModel record
+        filter_type : str — chosen noise removal filter (or "skip")
+
+    Applies the filter to the original image and feeds it to the Keras model.
+    """
+    if request.method != "POST":
+        form = forms.UserImageForm()
+        return render(request, 'app/model.html', {'form': form})
+
+    try:
+        image_id    = int(request.POST.get("image_id", 0))
+        filter_type = str(request.POST.get("filter_type", "skip")).strip().lower()
+    except (ValueError, TypeError):
+        form = forms.UserImageForm()
+        return render(request, 'app/model.html', {'form': form})
+
+    try:
+        record = UserImageModel.objects.get(id=image_id)
+    except UserImageModel.DoesNotExist:
+        form = forms.UserImageForm()
+        return render(request, 'app/model.html', {'form': form})
+
+    # Load, optionally denoise, then predict
+    original_array = load_image_for_preview(record.image.path)
+    processed_array = apply_selected_filter(original_array, filter_type)
+
+    a, b = _run_prediction(processed_array)
+
+    record.label = a
+    record.save()
+
+    return render(request, 'App/output.html', {
+        'obj': record, 'predict': a, 'predict1': b
+    })
 
 
 

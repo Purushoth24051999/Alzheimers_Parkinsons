@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRI Noise Removal – Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 82, 204, 0.12);
+      width: 100%;
+      max-width: 1100px;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1e88e5, #0d47a1);
+      color: white;
+      padding: 28px 40px;
+      text-align: center;
+    }
+    .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 6px; }
+    .header p  { font-size: 1rem; opacity: 0.9; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 22px 40px;
+      background: #f8fbff;
+      border-bottom: 1px solid #e3eaf6;
+    }
+    .filter-bar label {
+      font-weight: 600;
+      color: #0d47a1;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .filter-bar select {
+      padding: 10px 16px;
+      border: 2px solid #90caf9;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #333;
+      background: white;
+      cursor: pointer;
+      flex: 1;
+      min-width: 220px;
+      max-width: 340px;
+    }
+    .filter-bar select:focus { outline: none; border-color: #1e88e5; }
+
+    .btn-apply {
+      padding: 10px 22px;
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn-apply:hover { background: #1565c0; transform: translateY(-1px); }
+    .btn-apply:disabled { background: #90caf9; cursor: not-allowed; transform: none; }
+
+    /* ── Image comparison grid ── */
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      padding: 30px 40px;
+    }
+    @media (max-width: 680px) {
+      .image-grid { grid-template-columns: 1fr; }
+      .filter-bar, .actions { padding: 18px 20px; }
+    }
+
+    .image-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .image-panel h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0d47a1;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .image-panel img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      border-radius: 12px;
+      border: 6px solid white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      object-fit: contain;
+      background: #f0f0f0;
+    }
+    .badge {
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .badge-original  { background: #e3f2fd; color: #1565c0; }
+    .badge-filtered  { background: #e8f5e9; color: #2e7d32; }
+
+    /* Spinner overlay on the filtered image */
+    .img-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: center;
+    }
+    #spinner {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.75);
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #1e88e5;
+    }
+    #spinner.active { display: flex; }
+
+    /* ── Active filter label ── */
+    .filter-label-display {
+      font-size: 0.88rem;
+      color: #555;
+      text-align: center;
+    }
+    .filter-label-display strong { color: #1e88e5; }
+
+    /* ── Action buttons ── */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 28px 40px;
+      border-top: 1px solid #e3eaf6;
+      background: #f8fbff;
+    }
+
+    .btn {
+      padding: 13px 30px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      border: none;
+      transition: all 0.25s;
+    }
+    .btn-proceed {
+      background: linear-gradient(135deg, #43a047, #2e7d32);
+      color: white;
+      box-shadow: 0 5px 15px rgba(67, 160, 71, 0.35);
+    }
+    .btn-proceed:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(67,160,71,0.45); }
+    .btn-back {
+      background: white;
+      color: #1e88e5;
+      border: 2px solid #1e88e5;
+    }
+    .btn-back:hover { background: #e3f2fd; transform: translateY(-2px); }
+
+    /* ── Disclaimer ── */
+    .notice {
+      background: #fff8e1;
+      border-left: 4px solid #ffb300;
+      padding: 12px 40px;
+      font-size: 0.83rem;
+      color: #795548;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <h1><i class="fas fa-filter"></i> Noise Removal Preview</h1>
+    <p>Review the denoised MRI image before running the prediction model</p>
+  </div>
+
+  <!-- Filter selection bar -->
+  <div class="filter-bar">
+    <label for="filterSelect"><i class="fas fa-sliders-h"></i> Change Filter:</label>
+    <select id="filterSelect">
+      <option value="skip"        {% if current_filter == "skip" %}selected{% endif %}>Skip (No noise removal)</option>
+      <option value="gaussian"    {% if current_filter == "gaussian" %}selected{% endif %}>Gaussian Filter — Gaussian noise</option>
+      <option value="median"      {% if current_filter == "median" %}selected{% endif %}>Median Filter — Salt-and-pepper noise</option>
+      <option value="bilateral"   {% if current_filter == "bilateral" %}selected{% endif %}>Bilateral Filter — Rician noise (edge-preserving)</option>
+      <option value="nlm"         {% if current_filter == "nlm" %}selected{% endif %}>Non-Local Means Denoising — Speckle / Rician noise</option>
+      <option value="anisotropic" {% if current_filter == "anisotropic" %}selected{% endif %}>Anisotropic Diffusion — Speckle noise</option>
+      <option value="wavelet"     {% if current_filter == "wavelet" %}selected{% endif %}>Wavelet Denoising — General MRI noise</option>
+    </select>
+    <button class="btn-apply" id="applyBtn" onclick="applyFilter()">
+      <i class="fas fa-sync-alt"></i> Apply Filter
+    </button>
+  </div>
+
+  <!-- Image comparison -->
+  <div class="image-grid">
+
+    <div class="image-panel">
+      <h3><i class="fas fa-image" style="color:#1e88e5;"></i> Original MRI</h3>
+      <span class="badge badge-original">Before denoising</span>
+      <img src="{{ original_image }}" alt="Original MRI scan" id="originalImg">
+    </div>
+
+    <div class="image-panel">
+      <h3><i class="fas fa-magic" style="color:#43a047;"></i> Noise Removed MRI</h3>
+      <span class="badge badge-filtered">After denoising</span>
+      <div class="img-wrapper">
+        <img src="{{ filtered_image }}" alt="Noise-removed MRI scan" id="filteredImg">
+        <div id="spinner"><i class="fas fa-spinner fa-spin"></i></div>
+      </div>
+      <div class="filter-label-display">
+        Filter applied: <strong id="filterLabelText">{{ current_filter_display }}</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <!-- Proceed: POST image_id + filter_type to predict_denoised view -->
+    <form method="post" action="{% url 'predict_denoised' %}" id="proceedForm">
+      {% csrf_token %}
+      <input type="hidden" name="image_id"    id="hiddenImageId"    value="{{ image_id }}">
+      <input type="hidden" name="filter_type" id="hiddenFilterType" value="{{ current_filter }}">
+      <button type="submit" class="btn btn-proceed">
+        <i class="fas fa-brain"></i> Proceed to Prediction
+      </button>
+    </form>
+
+    <a href="{% url 'Deploy_8' %}" class="btn btn-back">
+      <i class="fas fa-upload"></i> Re-upload Image
+    </a>
+  </div>
+
+  <div class="notice">
+    <i class="fas fa-info-circle"></i>
+    <strong>Tip:</strong> If the denoised image looks over-smoothed or unnatural, try a different filter before proceeding.
+    The prediction model receives the denoised image shown on the right.
+  </div>
+
+</div><!-- /card -->
+
+<script>
+  // CSRF token helper
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      document.cookie.split(';').forEach(function(cookie) {
+        cookie = cookie.trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        }
+      });
+    }
+    return cookieValue;
+  }
+
+  const FILTER_LABELS = {
+    "skip":        "Skip (No noise removal)",
+    "gaussian":    "Gaussian Filter",
+    "median":      "Median Filter",
+    "bilateral":   "Bilateral Filter",
+    "nlm":         "Non-Local Means Denoising",
+    "anisotropic": "Anisotropic Diffusion",
+    "wavelet":     "Wavelet Denoising"
+  };
+
+  /**
+   * Called when the user clicks "Apply Filter".
+   * Sends an AJAX request to /apply_filter_ajax/ with the image ID and
+   * selected filter type, then updates the right-hand preview image in-place.
+   */
+  function applyFilter() {
+    const filterType = document.getElementById('filterSelect').value;
+    const imageId    = document.getElementById('hiddenImageId').value;
+    const applyBtn   = document.getElementById('applyBtn');
+    const spinner    = document.getElementById('spinner');
+    const filteredImg = document.getElementById('filteredImg');
+
+    // Show loading state
+    applyBtn.disabled = true;
+    applyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing…';
+    spinner.classList.add('active');
+
+    fetch("{% url 'apply_filter_ajax' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+      body: JSON.stringify({ image_id: imageId, filter_type: filterType })
+    })
+    .then(function(response) {
+      if (!response.ok) { throw new Error('Server error: ' + response.status); }
+      return response.json();
+    })
+    .then(function(data) {
+      // Update the filtered image
+      filteredImg.src = data.filtered_image;
+
+      // Sync the hidden inputs so "Proceed" uses the newly applied filter
+      document.getElementById('hiddenFilterType').value = filterType;
+
+      // Update the label
+      document.getElementById('filterLabelText').textContent =
+        FILTER_LABELS[filterType] || filterType;
+    })
+    .catch(function(err) {
+      alert('Failed to apply filter: ' + err.message);
+    })
+    .finally(function() {
+      applyBtn.disabled = false;
+      applyBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Apply Filter';
+      spinner.classList.remove('active');
+    });
+  }
+</script>
+
+</body>
+</html>
