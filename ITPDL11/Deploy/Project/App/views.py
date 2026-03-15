@@ -304,7 +304,7 @@ def predict_denoised(request):
         return render(request, 'app/model.html', {'form': form})
 
     # Load, optionally denoise, then predict
-    original_array = load_image_for_preview(record.image.path)
+    original_array  = load_image_for_preview(record.image.path)
     processed_array = apply_selected_filter(original_array, filter_type)
 
     a, b = _run_prediction(processed_array)
@@ -312,8 +312,15 @@ def predict_denoised(request):
     record.label = a
     record.save()
 
+    # Pass the filtered image as base64 only when a filter was actually applied
+    filtered_b64 = image_to_base64(processed_array) if filter_type != "skip" else None
+
     return render(request, 'App/output.html', {
-        'obj': record, 'predict': a, 'predict1': b
+        'obj':            record,
+        'predict':        a,
+        'predict1':       b,
+        'filtered_image': filtered_b64,
+        'filter_name':    _FILTER_DISPLAY_NAMES.get(filter_type, filter_type) if filter_type != "skip" else None,
     })
 
 
